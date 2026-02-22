@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
           image_url: imageUrl,
           video_url: videoUrl,
           status: "active",
-        })
+        } as any)
         .eq("id", avatarId)
         .eq("user_id", userId)
 
@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
       // Marquer comme failed
       await supabase
         .from("avatars")
-        .update({ status: "failed" })
+        .update({ status: "failed" } as any)
         .eq("id", avatarId)
         .eq("user_id", userId)
 
