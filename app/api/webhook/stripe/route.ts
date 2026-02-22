@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
           
           if (userId) {
             // Mettre à jour l'utilisateur
-            await supabase.from("users").update({
+            await (supabase.from("users") as any).update({
               subscription_status: "active",
               subscription_plan: plan,
               stripe_customer_id: customerId,
@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
             }).eq("id", userId)
             
             // Créer transaction crédits
-            await supabase.from("credit_transactions").insert({
+            await (supabase.from("credit_transactions") as any).insert({
               user_id: userId,
               amount: 30,
               type: "monthly",
@@ -59,11 +59,9 @@ export async function POST(req: NextRequest) {
           const credits = parseInt(session.metadata?.credits || "0")
           
           if (userId && credits > 0) {
-            await supabase.from("users").update({
-              credits_remaining: supabase.rpc("increment_credits", { user_id: userId, amount: credits }),
-            }).eq("id", userId)
+            await (supabase.rpc as any)("increment_credits", { user_id: userId, amount: credits })
             
-            await supabase.from("credit_transactions").insert({
+            await (supabase.from("credit_transactions") as any).insert({
               user_id: userId,
               amount: credits,
               type: "purchase",
@@ -79,14 +77,13 @@ export async function POST(req: NextRequest) {
         const customerId = invoice.customer as string
         
         // Récupérer l'utilisateur
-        const { data: user } = await supabase
-          .from("users")
+        const { data: user } = await (supabase.from("users") as any)
           .select("id")
           .eq("stripe_customer_id", customerId)
           .single()
         
         if (user) {
-          await supabase.from("users").update({
+          await (supabase.from("users") as any).update({
             subscription_status: "past_due",
           }).eq("id", user.id)
         }
@@ -97,14 +94,13 @@ export async function POST(req: NextRequest) {
         const subscription = event.data.object as Stripe.Subscription
         const customerId = subscription.customer as string
         
-        const { data: user } = await supabase
-          .from("users")
+        const { data: user } = await (supabase.from("users") as any)
           .select("id")
           .eq("stripe_customer_id", customerId)
           .single()
         
         if (user) {
-          await supabase.from("users").update({
+          await (supabase.from("users") as any).update({
             subscription_status: "cancelled",
           }).eq("id", user.id)
         }
