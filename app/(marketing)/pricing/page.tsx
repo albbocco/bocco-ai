@@ -1,7 +1,7 @@
 import { Metadata } from "next"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Check, ArrowRight } from "lucide-react"
+import { Check } from "lucide-react"
 
 export const metadata: Metadata = {
   title: "Tarifs - Bocco.ai",
