@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
         .eq("user_id", userId)
 
       // Déduire les crédits
-      await supabase.rpc("decrement_credits", {
+      await (supabase.rpc as any)("decrement_credits", {
         user_id: userId,
         amount: creditsUsed,
       })
@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
         .eq("user_id", userId)
 
       // Rembourser les crédits
-      await supabase.rpc("increment_credits", {
+      await (supabase.rpc as any)("increment_credits", {
         user_id: userId,
         amount: creditsUsed,
       })
