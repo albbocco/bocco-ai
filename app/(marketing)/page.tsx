@@ -2,6 +2,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { ArrowRight, Sparkles, Zap, Shield, Play, Check } from "lucide-react"
 
+// v2 - Minimalist design refresh
 export default function Home() {
   return (
     <main className="min-h-screen bg-white">
