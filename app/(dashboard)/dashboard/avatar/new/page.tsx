@@ -30,7 +30,6 @@ export default function NewAvatarPage() {
     setIsLoading(true)
     
     try {
-      // Upload photo to R2/Supabase storage
       const formData = new FormData()
       formData.append("photo", photo)
       formData.append("description", description)
@@ -60,121 +59,122 @@ export default function NewAvatarPage() {
         </p>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <span className="w-8 h-8 rounded-full bg-violet-500/10 flex items-center justify-center text-violet-500 text-sm font-bold">
-              1
-            </span>
-            Description de l'avatar
-          </CardTitle>
-          <CardDescription>
-            Décrivez l'apparence de votre avatar ou téléchargez une photo de référence
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          {/* Upload Photo */}
-          <div className="space-y-2">
-            <Label>Photo de référence (optionnel)</Label>
-            <div className="border-2 border-dashed border-muted rounded-lg p-8 text-center hover:border-violet-500/50 transition-colors cursor-pointer">
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handlePhotoUpload}
-                className="hidden"
-                id="photo-upload"
-              />
-              <label htmlFor="photo-upload" className="cursor-pointer">
-                {photo ? (
-                  <div className="flex items-center justify-center gap-2">
-                    <User className="w-5 h-5 text-violet-500" />
-                    <span>{photo.name}</span>
-                  </div>
-                ) : (
-                  <div className="space-y-2">
-                    <Upload className="w-8 h-8 mx-auto text-muted-foreground" />
-                    <p className="text-sm text-muted-foreground">
-                      Glissez une photo ou cliquez pour sélectionner
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      JPG, PNG jusqu'à 10MB
-                    </p>
-                  </div>
-                )}
-              </label>
+      {step === 1 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <span className="w-8 h-8 rounded-full bg-violet-500/10 flex items-center justify-center text-violet-500 text-sm font-bold">
+                1
+              </span>
+              Description de l&apos;avatar
+            </CardTitle>
+            <CardDescription>
+              Décrivez l&apos;apparence de votre avatar ou téléchargez une photo de référence
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="space-y-2">
+              <Label>Photo de référence (optionnel)</Label>
+              <div className="border-2 border-dashed border-muted rounded-lg p-8 text-center hover:border-violet-500/50 transition-colors cursor-pointer">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handlePhotoUpload}
+                  className="hidden"
+                  id="photo-upload"
+                />
+                <label htmlFor="photo-upload" className="cursor-pointer">
+                  {photo ? (
+                    <div className="flex items-center justify-center gap-2">
+                      <User className="w-5 h-5 text-violet-500" />
+                      <span>{photo.name}</span>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      <Upload className="w-8 h-8 mx-auto text-muted-foreground" />
+                      <p className="text-sm text-muted-foreground">
+                        Glissez une photo ou cliquez pour sélectionner
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        JPG, PNG jusqu&apos;à 10MB
+                      </p>
+                    </div>
+                  )}
+                </label>
+              </div>
             </div>
-          </div>
 
-          {/* Description */}
-          <div className="space-y-2">
-            <Label htmlFor="description">Description détaillée</Label>
-            <Textarea
-              id="description"
-              placeholder="Ex: Une femme d'affaires professionnelle, 35 ans, cheveux bruns mi-longs, souriante, portant un tailleur bleu marine..."
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              rows={4}
-            />
-            <p className="text-xs text-muted-foreground">
-              Plus la description est détaillée, plus l'avatar sera fidèle à vos attentes.
-            </p>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <span className="w-8 h-8 rounded-full bg-violet-500/10 flex items-center justify-center text-violet-500 text-sm font-bold">
-              2
-            </span>
-            Voix de l'avatar
-          </CardTitle>
-          <CardDescription>
-            Choisissez la voix qui correspond à votre avatar
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <RadioGroup
-            value={gender}
-            onValueChange={(value) => setGender(value as "male" | "female")}
-            className="grid grid-cols-2 gap-4"
-          >
-            <div>
-              <RadioGroupItem
-                value="female"
-                id="female"
-                className="peer sr-only"
+            <div className="space-y-2">
+              <Label htmlFor="description">Description détaillée</Label>
+              <Textarea
+                id="description"
+                placeholder="Ex: Une femme d'affaires professionnelle, 35 ans, cheveux bruns mi-longs, souriante..."
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                rows={4}
               />
-              <Label
-                htmlFor="female"
-                className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-violet-500 peer-data-[state=checked]:bg-violet-500/5 cursor-pointer"
-              >
-                <User className="mb-3 h-6 w-6" />
-                <span className="font-medium">Voix féminine</span>
-                <span className="text-xs text-muted-foreground">Française</span>
-              </Label>
+              <p className="text-xs text-muted-foreground">
+                Plus la description est détaillée, plus l&apos;avatar sera fidèle à vos attentes.
+              </p>
             </div>
-            <div>
-              <RadioGroupItem
-                value="male"
-                id="male"
-                className="peer sr-only"
-              />
-              <Label
-                htmlFor="male"
-                className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-violet-500 peer-data-[state=checked]:bg-violet-500/5 cursor-pointer"
-              >
-                <User className="mb-3 h-6 w-6" />
-                <span className="font-medium">Voix masculine</span>
-                <span className="text-xs text-muted-foreground">Française</span>
-              </Label>
-            </div>
-          </RadioGroup>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      )}
 
-      {/* Cost Info */}
+      {step === 2 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <span className="w-8 h-8 rounded-full bg-violet-500/10 flex items-center justify-center text-violet-500 text-sm font-bold">
+                2
+              </span>
+              Voix de l&apos;avatar
+            </CardTitle>
+            <CardDescription>
+              Choisissez la voix qui correspond à votre avatar
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <RadioGroup
+              value={gender}
+              onValueChange={(value) => setGender(value as "male" | "female")}
+              className="grid grid-cols-2 gap-4"
+            >
+              <div>
+                <RadioGroupItem
+                  value="female"
+                  id="female"
+                  className="peer sr-only"
+                />
+                <Label
+                  htmlFor="female"
+                  className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-violet-500 peer-data-[state=checked]:bg-violet-500/5 cursor-pointer"
+                >
+                  <User className="mb-3 h-6 w-6" />
+                  <span className="font-medium">Voix féminine</span>
+                  <span className="text-xs text-muted-foreground">Française</span>
+                </Label>
+              </div>
+              <div>
+                <RadioGroupItem
+                  value="male"
+                  id="male"
+                  className="peer sr-only"
+                />
+                <Label
+                  htmlFor="male"
+                  className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-violet-500 peer-data-[state=checked]:bg-violet-500/5 cursor-pointer"
+                >
+                  <User className="mb-3 h-6 w-6" />
+                  <span className="font-medium">Voix masculine</span>
+                  <span className="text-xs text-muted-foreground">Française</span>
+                </Label>
+              </div>
+            </RadioGroup>
+          </CardContent>
+        </Card>
+      )}
+
       <Card className="bg-violet-500/5 border-violet-500/20">
         <CardContent className="flex items-center justify-between py-4">
           <div className="flex items-center gap-3">
@@ -191,31 +191,49 @@ export default function NewAvatarPage() {
         </CardContent>
       </Card>
 
-      {/* Submit */}
       <div className="flex gap-4">
+        {step === 2 && (
+          <Button
+            variant="outline"
+            onClick={() => setStep(1)}
+            disabled={isLoading}
+          >
+            Retour
+          </Button>
+        )}
+        {step === 1 ? (
+          <Button
+            onClick={() => setStep(2)}
+            disabled={!description && !photo}
+            className="flex-1 bg-gradient-to-r from-violet-600 to-indigo-600"
+          >
+            Continuer
+          </Button>
+        ) : (
+          <Button
+            onClick={handleSubmit}
+            disabled={isLoading}
+            className="flex-1 bg-gradient-to-r from-violet-600 to-indigo-600"
+          >
+            {isLoading ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Création en cours...
+              </>
+            ) : (
+              <>
+                <Sparkles className="w-4 h-4 mr-2" />
+                Créer mon avatar
+              </>
+            )}
+          </Button>
+        )}
         <Button
-          variant="outline"
+          variant="ghost"
           onClick={() => router.push("/dashboard")}
           disabled={isLoading}
         >
           Annuler
-        </Button>
-        <Button
-          onClick={handleSubmit}
-          disabled={isLoading || (!description && !photo)}
-          className="flex-1 bg-gradient-to-r from-violet-600 to-indigo-600"
-        >
-          {isLoading ? (
-            <>
-              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              Création en cours...
-            </>
-          ) : (
-            <>
-              <Sparkles className="w-4 h-4 mr-2" />
-              Créer mon avatar
-            </>
-          )}
         </Button>
       </div>
     </div>
