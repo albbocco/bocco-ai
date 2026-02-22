@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
           final_url: finalUrl,
           status: "completed",
           completed_at: new Date().toISOString(),
-        })
+        } as any)
         .eq("id", videoId)
         .eq("user_id", userId)
 
@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
       // Marquer comme failed
       await supabase
         .from("videos")
-        .update({ status: "failed" })
+        .update({ status: "failed" } as any)
         .eq("id", videoId)
         .eq("user_id", userId)
 
