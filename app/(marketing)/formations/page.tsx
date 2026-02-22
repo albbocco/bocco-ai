@@ -1,15 +1,12 @@
 import { Metadata } from "next"
-import { Navbar } from "@/components/landing/navbar"
-import { Footer } from "@/components/landing/footer"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Check, BookOpen, Code, Lightbulb } from "lucide-react"
-import Link from "next/link"
+import { Check, BookOpen, Lightbulb, Code } from "lucide-react"
 
 export const metadata: Metadata = {
   title: "Formations MRR - Bocco.ai",
-  description: "Bénéficiez de réductions sur votre abonnement Bocco.ai avec nos formations partenaires DSA, ASA et Code Liberté.",
+  description: "Bénéficiez de réductions sur votre abonnement Bocco.ai avec nos formations partenaires.",
 }
 
 const formations = [
@@ -26,7 +23,6 @@ const formations = [
       "Mises à jour à vie",
     ],
     icon: BookOpen,
-    color: "from-blue-500 to-cyan-600",
   },
   {
     name: "ASA",
@@ -41,10 +37,10 @@ const formations = [
       "Coaching mensuel",
     ],
     icon: Lightbulb,
-    color: "from-violet-500 to-purple-600",
   },
   {
     name: "Code Liberté",
+    fullName: "Code Liberté",
     price: 350,
     discount: 2,
     description: "Apprenez à coder et créez vos propres outils et SaaS sans dépendre de personne.",
@@ -55,72 +51,88 @@ const formations = [
       "Support technique",
     ],
     icon: Code,
-    color: "from-emerald-500 to-teal-600",
   },
 ]
 
 export default function FormationsPage() {
   return (
-    <main className="min-h-screen">
-      <Navbar />
-      
-      <section className="pt-32 pb-24">
+    <main className="min-h-screen bg-white">
+      {/* Navbar */}
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-neutral-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Header */}
-          <div className="text-center mb-16">
-            <Badge className="mb-4" variant="secondary">
+          <div className="flex items-center justify-between h-16">
+            <Link href="/" className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-neutral-900 flex items-center justify-center">
+                <span className="text-white font-bold text-sm">B</span>
+              </div>
+              <span className="font-semibold text-lg">Bocco.ai</span>
+            </Link>
+            <Link href="/login" className="text-sm text-neutral-600 hover:text-neutral-900">
+              Connexion
+            </Link>
+          </div>
+        </div>
+      </nav>
+
+      {/* Hero */}
+      <section className="pt-32 pb-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-3xl mx-auto">
+            <Badge className="mb-4 bg-neutral-100 text-neutral-700 hover:bg-neutral-100" variant="secondary">
               Partenariats formations
             </Badge>
-            <h1 className="text-4xl sm:text-5xl font-bold mb-4">
-              Formations <span className="text-gradient">MRR</span>
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-neutral-900 mb-6">
+              Formations MRR
             </h1>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-lg text-neutral-600">
               Investissez dans votre formation et bénéficiez de réductions exclusives sur votre abonnement Bocco.ai.
             </p>
           </div>
+        </div>
+      </section>
 
-          {/* Formation Cards */}
-          <div className="grid md:grid-cols-3 gap-8 mb-16">
+      {/* Formations Cards */}
+      <section className="pb-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid md:grid-cols-3 gap-8 mb-20">
             {formations.map((formation, index) => (
-              <Card
+              <div
                 key={index}
-                className="relative overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm"
+                className="bg-white rounded-2xl p-8 border border-neutral-200 relative overflow-hidden"
               >
-                <div className={`absolute top-0 left-0 w-full h-1 bg-gradient-to-r ${formation.color}`} />
-                <CardHeader>
-                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${formation.color} flex items-center justify-center mb-4`}>
-                    <formation.icon className="w-6 h-6 text-white" />
-                  </div>
-                  <CardTitle className="text-2xl">{formation.name}</CardTitle>
-                  <CardDescription>{formation.fullName}</CardDescription>
-                  <div className="mt-4">
-                    <span className="text-3xl font-bold">{formation.price}€</span>
-                    <Badge className="ml-2" variant="secondary">
-                      -{formation.discount}€/mois sur Bocco.ai
-                    </Badge>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <p className="text-muted-foreground">{formation.description}</p>
-                  <ul className="space-y-3">
-                    {formation.features.map((feature, i) => (
-                      <li key={i} className="flex items-start space-x-3">
-                        <Check className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />
-                        <span className="text-sm text-muted-foreground">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <Link href="/signup">
-                    <Button className="w-full">En savoir plus</Button>
-                  </Link>
-                </CardContent>
-              </Card>
+                <div className="absolute top-0 left-0 w-full h-1 bg-neutral-900" />
+                <div className="w-12 h-12 rounded-xl bg-neutral-100 flex items-center justify-center mb-6">
+                  <formation.icon className="w-6 h-6 text-neutral-700" />
+                </div>
+                <h3 className="text-2xl font-bold text-neutral-900 mb-1">{formation.name}</h3>
+                <p className="text-sm text-neutral-500 mb-4">{formation.fullName}</p>
+                <div className="mb-4">
+                  <span className="text-3xl font-bold text-neutral-900">{formation.price}€</span>
+                  <Badge className="ml-2 bg-neutral-900 text-white hover:bg-neutral-800">
+                    -{formation.discount}€/mois
+                  </Badge>
+                </div>
+                <p className="text-neutral-600 mb-6">{formation.description}</p>
+                <ul className="space-y-3 mb-8">
+                  {formation.features.map((feature, i) => (
+                    <li key={i} className="flex items-start gap-3 text-sm text-neutral-600">
+                      <Check className="w-5 h-5 text-neutral-900 shrink-0 mt-0.5" />
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+                <Link href="/signup">
+                  <Button className="w-full rounded-full bg-neutral-900 hover:bg-neutral-800">
+                    En savoir plus
+                  </Button>
+                </Link>
+              </div>
             ))}
           </div>
 
           {/* How it works */}
-          <div className="bg-card/50 backdrop-blur-sm border border-border/50 rounded-2xl p-8">
-            <h2 className="text-2xl font-bold text-center mb-8">
+          <div className="bg-neutral-50 rounded-2xl p-8 lg:p-12">
+            <h2 className="text-2xl font-bold text-center text-neutral-900 mb-12">
               Comment ça marche ?
             </h2>
             <div className="grid md:grid-cols-4 gap-8">
@@ -131,11 +143,11 @@ export default function FormationsPage() {
                 { step: "4", title: "Économisez", desc: "Profitez de crédits supplémentaires chaque mois !" },
               ].map((item, index) => (
                 <div key={index} className="text-center">
-                  <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-violet-600 text-white flex items-center justify-center text-xl font-bold">
+                  <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-neutral-900 text-white flex items-center justify-center text-xl font-bold">
                     {item.step}
                   </div>
-                  <h3 className="font-semibold mb-2">{item.title}</h3>
-                  <p className="text-sm text-muted-foreground">{item.desc}</p>
+                  <h3 className="font-semibold text-neutral-900 mb-2">{item.title}</h3>
+                  <p className="text-sm text-neutral-600">{item.desc}</p>
                 </div>
               ))}
             </div>
@@ -143,7 +155,25 @@ export default function FormationsPage() {
         </div>
       </section>
 
-      <Footer />
+      {/* Footer */}
+      <footer className="py-12 border-t border-neutral-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-neutral-900 flex items-center justify-center">
+                <span className="text-white font-bold text-sm">B</span>
+              </div>
+              <span className="font-semibold">Bocco.ai</span>
+            </div>
+            <div className="flex items-center gap-6 text-sm text-neutral-600">
+              <Link href="/privacy" className="hover:text-neutral-900">Confidentialité</Link>
+              <Link href="/terms" className="hover:text-neutral-900">CGU</Link>
+              <Link href="/contact" className="hover:text-neutral-900">Contact</Link>
+            </div>
+            <p className="text-sm text-neutral-500">© 2026 Bocco.ai</p>
+          </div>
+        </div>
+      </footer>
     </main>
   )
 }
