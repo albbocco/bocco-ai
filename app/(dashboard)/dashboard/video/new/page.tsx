@@ -20,7 +20,6 @@ const FORMATIONS = [
 
 export default function NewVideoPage() {
   const router = useRouter()
-  const [step, setStep] = useState<1 | 2 | 3>(1)
   const [sourceType, setSourceType] = useState<"url" | "upload">("url")
   const [videoUrl, setVideoUrl] = useState("")
   const [videoFile, setVideoFile] = useState<File | null>(null)
