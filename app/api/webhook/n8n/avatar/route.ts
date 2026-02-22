@@ -21,13 +21,14 @@ export async function POST(req: NextRequest) {
 
     if (status === "completed") {
       // Mettre à jour l'avatar avec les URLs
+      // @ts-ignore
       await supabase
         .from("avatars")
         .update({
           image_url: imageUrl,
           video_url: videoUrl,
           status: "active",
-        } as any)
+        })
         .eq("id", avatarId)
         .eq("user_id", userId)
 
@@ -60,9 +61,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: true })
     } else if (status === "failed") {
       // Marquer comme failed
+      // @ts-ignore
       await supabase
         .from("avatars")
-        .update({ status: "failed" } as any)
+        .update({ status: "failed" })
         .eq("id", avatarId)
         .eq("user_id", userId)
 
