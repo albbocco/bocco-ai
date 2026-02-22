@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
         amount: creditsUsed,
       })
 
-      await supabase.from("credit_transactions").insert({
+      await (supabase.from("credit_transactions") as any).insert({
         user_id: userId,
         amount: -creditsUsed,
         type: "usage",
@@ -63,7 +63,7 @@ export async function POST(req: NextRequest) {
         amount: creditsUsed,
       })
 
-      await supabase.from("credit_transactions").insert({
+      await (supabase.from("credit_transactions") as any).insert({
         user_id: userId,
         amount: creditsUsed,
         type: "refund",

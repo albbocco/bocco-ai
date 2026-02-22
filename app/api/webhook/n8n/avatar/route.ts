@@ -32,8 +32,8 @@ export async function POST(req: NextRequest) {
         .eq("user_id", userId)
 
       // Déduire les crédits (si pas gratuit)
-      const { data: avatar } = await supabase
-        .from("avatars")
+      const { data: avatar } = await (supabase
+        .from("avatars") as any)
         .select("is_free")
         .eq("id", avatarId)
         .single()
@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
           amount: 1,
         })
 
-        await supabase.from("credit_transactions").insert({
+        await (supabase.from("credit_transactions") as any).insert({
           user_id: userId,
           amount: -1,
           type: "usage",
@@ -72,7 +72,7 @@ export async function POST(req: NextRequest) {
         amount: 1,
       })
 
-      await supabase.from("credit_transactions").insert({
+      await (supabase.from("credit_transactions") as any).insert({
         user_id: userId,
         amount: 1,
         type: "refund",
