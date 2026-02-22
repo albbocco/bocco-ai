@@ -21,9 +21,8 @@ export async function POST(req: NextRequest) {
 
     if (status === "completed") {
       // Mettre à jour l'avatar avec les URLs
-      // @ts-ignore
-      await supabase
-        .from("avatars")
+      await (supabase
+        .from("avatars") as any)
         .update({
           image_url: imageUrl,
           video_url: videoUrl,
@@ -61,9 +60,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: true })
     } else if (status === "failed") {
       // Marquer comme failed
-      // @ts-ignore
-      await supabase
-        .from("avatars")
+      await (supabase
+        .from("avatars") as any)
         .update({ status: "failed" })
         .eq("id", avatarId)
         .eq("user_id", userId)

@@ -23,9 +23,8 @@ export async function POST(req: NextRequest) {
 
     if (status === "completed") {
       // Mettre à jour la vidéo
-      // @ts-ignore
-      await supabase
-        .from("videos")
+      await (supabase
+        .from("videos") as any)
         .update({
           preview_url: previewUrl,
           final_url: finalUrl,
@@ -52,9 +51,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: true })
     } else if (status === "failed") {
       // Marquer comme failed
-      // @ts-ignore
-      await supabase
-        .from("videos")
+      await (supabase
+        .from("videos") as any)
         .update({ status: "failed" })
         .eq("id", videoId)
         .eq("user_id", userId)
