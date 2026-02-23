@@ -129,6 +129,35 @@ export default function Home() {
               <p className="text-gray-600">Disponible uniquement après abonnement. Aucun engagement, tu ne paies que ce que tu utilises.</p>
             </div>
             
+            {/* Comment créer une vidéo */}
+            <div className="bg-white rounded-2xl p-8 max-w-4xl mx-auto mb-8 border border-gray-200">
+              <h4 className="text-2xl font-bold mb-6 text-gray-900 text-center">Comment créer une vidéo faceless ?</h4>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="text-center">
+                  <div className="w-12 h-12 rounded-full bg-gray-900 text-white flex items-center justify-center text-xl font-bold mx-auto mb-3">1</div>
+                  <h5 className="font-bold mb-2">Choisis une vidéo virale</h5>
+                  <p className="text-sm text-gray-600">Colle le lien d&apos;une vidéo YouTube ou TikTok qui fonctionne bien dans ta niche.</p>
+                </div>
+                
+                <div className="text-center">
+                  <div className="w-12 h-12 rounded-full bg-gray-900 text-white flex items-center justify-center text-xl font-bold mx-auto mb-3">2</div>
+                  <h5 className="font-bold mb-2">Sélectionne ton avatar</h5>
+                  <p className="text-sm text-gray-600">Utilise ton avatar créé chez bocco.ai pour incarner la vidéo.</p>
+                </div>
+                
+                <div className="text-center">
+                  <div className="w-12 h-12 rounded-full bg-gray-900 text-white flex items-center justify-center text-xl font-bold mx-auto mb-3">3</div>
+                  <h5 className="font-bold mb-2">Reçois ta vidéo</h5>
+                  <p className="text-sm text-gray-600">Notre IA recrée la vidéo avec ton avatar. Télécharge et poste !</p>
+                </div>
+              </div>
+              
+              <div className="mt-6 text-center">
+                <p className="text-gray-500 text-sm">💡 1 crédit = 1 vidéo courte (utilise ton avatar existant)</p>
+              </div>
+            </div>
+
             <div className="bg-gray-100 rounded-2xl p-8 max-w-3xl mx-auto mb-8">
               <div className="flex items-center justify-center gap-3 mb-4">
                 <span className="text-4xl">🎁</span>
