@@ -122,6 +122,59 @@ export default function Home() {
               <p className="text-gray-600">Télécharge ta vidéo, poste sur les réseaux et vends tes formations MRR. Garde 100% des profits.</p>
             </div>
           </div>
+
+          {/* Explication crédits */}
+          <div className="bg-gray-50 rounded-3xl p-8 md:p-12">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+              <div>
+                <h3 className="text-3xl font-bold mb-6 text-gray-900">Comment utiliser tes crédits ?</h3>
+                <p className="text-gray-600 mb-6">Chaque action consomme des crédits. Utilise-tenant intelligemment pour maximiser ton contenu.</p>
+                <ul className="space-y-4">
+                  <li className="flex gap-4">
+                    <span className="w-8 h-8 rounded-full bg-gray-900 text-white flex items-center justify-center font-bold flex-shrink-0">1</span>
+                    <div>
+                      <h4 className="font-bold text-gray-900">1 avatar = 1 crédit</h4>
+                      <p className="text-gray-600 text-sm">Crée un nouveau avatar pour varier ton contenu</p>
+                    </div>
+                  </li>
+                  <li className="flex gap-4">
+                    <span className="w-8 h-8 rounded-full bg-gray-900 text-white flex items-center justify-center font-bold flex-shrink-0">1</span>
+                    <div>
+                      <h4 className="font-bold text-gray-900">1 vidéo courte = 1 crédit</h4>
+                      <p className="text-gray-600 text-sm">Moins d&apos;1 minute, parfaite pour TikTok/Shorts</p>
+                    </div>
+                  </li>
+                  <li className="flex gap-4">
+                    <span className="w-8 h-8 rounded-full bg-gray-900 text-white flex items-center justify-center font-bold flex-shrink-0">2</span>
+                    <div>
+                      <h4 className="font-bold text-gray-900">1 vidéo longue = 2 crédits</h4>
+                      <p className="text-gray-600 text-sm">1 à 2 minutes, pour YouTube ou contenu détaillé</p>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+              <div className="bg-white rounded-2xl p-6 shadow-lg">
+                <h4 className="font-bold text-lg mb-4 text-gray-900">Une vidéo en 3 clics</h4>
+                <ol className="space-y-3 text-sm text-gray-600">
+                  <li className="flex items-start gap-2">
+                    <span className="font-bold text-gray-900">1.</span>
+                    <span>Colle le lien d&apos;une vidéo virale (YouTube, TikTok)</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="font-bold text-gray-900">2.</span>
+                    <span>Sélectionne ton avatar</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="font-bold text-gray-900">3.</span>
+                    <span>Reçois ta vidéo en HD, prête à poster</span>
+                  </li>
+                </ol>
+                <div className="mt-4 pt-4 border-t border-gray-100 text-center">
+                  <p className="text-sm text-gray-500">💡 1 crédit déduit automatiquement</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
