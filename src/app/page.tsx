@@ -1,335 +1,324 @@
-import Link from "next/link"
+'use client';
+
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
 
 export default function Home() {
+  const [modalOpen, setModalOpen] = useState(false);
+  const [formations, setFormations] = useState({
+    dsa: false,
+    asa: false,
+    code: false
+  });
+
+  const updatePrice = () => {
+    let discount = 0;
+    if (formations.dsa) discount += 10;
+    if (formations.asa) discount += 5;
+    if (formations.code) discount += 5;
+    return { discount, finalPrice: Math.max(10, 30 - discount), savings: 30 - Math.max(10, 30 - discount) };
+  };
+
+  const { discount, finalPrice, savings } = updatePrice();
+
+  useEffect(() => {
+    const observerOptions = { threshold: 0.1 };
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('opacity-100', 'translate-y-0');
+          entry.target.classList.remove('opacity-0', 'translate-y-5');
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.card-animate').forEach(el => {
+      observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  const openModal = () => setModalOpen(true);
+  const closeModal = () => setModalOpen(false);
+
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen">
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-100">
+      <nav className="fixed top-0 w-full z-50 nav-blur border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-gray-900 flex items-center justify-center">
-                <span className="text-white font-bold text-sm">B</span>
-              </div>
-              <span className="font-semibold text-lg text-gray-900">Bocco.ai</span>
-            </Link>
-            
-            <div className="hidden md:flex items-center gap-8">
-              <Link href="#features" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">Fonctionnalités</Link>
-              <Link href="#pricing" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">Tarifs</Link>
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center space-x-2">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-blue-500"></div>
+              <span className="text-xl font-semibold tracking-tight">AvatarStudio</span>
             </div>
-            
-            <div className="flex items-center gap-3">
-              <Link href="/login" className="hidden sm:block text-sm text-gray-600 hover:text-gray-900">
-                Connexion
-              </Link>
-              <Link 
-                href="/signup" 
-                className="bg-gray-900 text-white px-5 py-2 rounded-full text-sm font-medium hover:bg-gray-800 transition-colors"
-              >
-                Commencer
-              </Link>
+            <div className="hidden md:flex items-center space-x-8">
+              <a href="#formations" className="text-sm text-gray-300 hover:text-white transition">Formations</a>
+              <a href="#pricing" className="text-sm text-gray-300 hover:text-white transition">Tarifs</a>
+              <a href="#contact" className="text-sm text-gray-300 hover:text-white transition">Contact</a>
+            </div>
+            <div className="flex items-center space-x-4">
+              <button onClick={openModal} className="text-sm text-gray-300 hover:text-white transition">Connexion</button>
+              <button onClick={openModal} className="btn-primary px-4 py-2 rounded-full text-sm font-medium">Essai Gratuit</button>
             </div>
           </div>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <section className="pt-32 pb-20 lg:pt-40 lg:pb-32">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-100 mb-8">
-              <span className="text-sm text-gray-600">✨ Nouveau : Création de vidéos faceless</span>
+      <section className="relative min-h-screen flex items-center justify-center pt-20">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-purple-900/20 via-black to-black"></div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+          <span className="inline-block px-4 py-2 rounded-full glass text-sm text-purple-300 mb-6">✨ Génère tes 1ers revenus en ligne 2026</span>
+          <h1 className="hero-title text-6xl md:text-8xl font-bold tracking-tight mb-6">Même sans expérience,<br/>sans visage,<br/><span className="gradient-text">sans budget pub</span></h1>
+          <p className="text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto mb-12">Crée ton avatar IA anonyme, génère 10 vidéos pro automatiquement, et vends tes formations avec l&apos;argument &quot;Abo IA 10€/mois&quot; imbattable.</p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <button onClick={openModal} className="btn-primary px-8 py-4 rounded-full text-lg font-medium">Créer mon avatar gratuit →</button>
+          </div>
+          <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="glass rounded-2xl p-6 float-animation">
+              <div className="text-4xl font-bold gradient-text mb-2">3 247</div>
+              <div className="text-gray-400">avatars créés</div>
             </div>
-            
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-gray-900 mb-6">
-              Créez votre avatar IA en quelques minutes
-            </h1>
-            
-            <p className="text-lg sm:text-xl text-gray-600 leading-relaxed max-w-2xl mx-auto mb-10">
-              Transformez votre présence en ligne avec des avatars IA réalistes et des vidéos 
-              faceless professionnelles. Le compagnon idéal pour les vendeurs de formations.
-            </p>
-            
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
-              <Link 
-                href="/signup"
-                className="bg-gray-900 text-white px-8 py-3 rounded-full text-base font-medium hover:bg-gray-800 transition-colors inline-flex items-center"
-              >
-                Commencer gratuitement
-                <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </svg>
-              </Link>
+            <div className="glass rounded-2xl p-6 float-animation" style={{ animationDelay: '0.5s' }}>
+              <div className="text-4xl font-bold gradient-text mb-2">50K+</div>
+              <div className="text-gray-400">vidéos générées</div>
             </div>
-            
-            <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-gray-500">
-              <div className="flex items-center gap-2">
-                <svg className="w-4 h-4 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-                <span>Essai gratuit</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <svg className="w-4 h-4 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-                <span>Sans carte bancaire</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <svg className="w-4 h-4 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-                <span>Annulation à tout moment</span>
-              </div>
+            <div className="glass rounded-2xl p-6 float-animation" style={{ animationDelay: '1s' }}>
+              <div className="text-4xl font-bold gradient-text mb-2">€2.4M</div>
+              <div className="text-gray-400">revenus générés</div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Features Grid */}
-      <section id="features" className="py-20 lg:py-32 bg-gray-50">
+      {/* Formations MRR Section */}
+      <section id="formations" className="py-32 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <span className="text-sm font-medium text-gray-500 uppercase tracking-wider">Fonctionnalités</span>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-gray-900 mt-3 mb-4">
-              Tout ce qu&apos;il faut pour scaler votre business
-            </h2>
-            <p className="text-base text-gray-600 leading-relaxed">
-              Une suite complète d&apos;outils IA conçue pour les entrepreneurs et vendeurs de formations en ligne.
-            </p>
+          <div className="text-center mb-20">
+            <h2 className="text-5xl md:text-6xl font-bold mb-6">Formations <span className="gradient-text">MRR</span></h2>
+            <p className="text-xl text-gray-400 max-w-2xl mx-auto">Achète une formation, cumule les réductions sur ton abonnement AvatarStudio</p>
           </div>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="bg-white rounded-2xl p-8 transition-all duration-300 hover:shadow-lg border border-gray-100">
-              <div className="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center mb-6">
-                <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* DSA */}
+            <div className="glass rounded-3xl p-8 card-hover card-animate opacity-0 translate-y-5">
+              <div className="flex justify-between items-start mb-4">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center text-2xl font-bold">DSA</div>
+                <span className="credit-badge px-3 py-1 rounded-full text-xs font-medium">POPULAIRE</span>
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">Avatars IA Réalistes</h3>
-              <p className="text-gray-600 leading-relaxed">
-                Créez votre clone numérique à partir de quelques photos. Notre IA génère des avatars ultra-réalistes.
-              </p>
-            </div>
-            
-            <div className="bg-white rounded-2xl p-8 transition-all duration-300 hover:shadow-lg border border-gray-100">
-              <div className="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center mb-6">
-                <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">Vidéos Faceless Pro</h3>
-              <p className="text-gray-600 leading-relaxed">
-                Générez des vidéos professionnelles sans montrer votre visage. Idéal pour le marketing d&apos;affiliation.
-              </p>
-            </div>
-            
-            <div className="bg-white rounded-2xl p-8 transition-all duration-300 hover:shadow-lg border border-gray-100">
-              <div className="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center mb-6">
-                <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">Crédits Flexibles</h3>
-              <p className="text-gray-600 leading-relaxed">
-                Payez uniquement pour ce que vous utilisez. Les crédits n&apos;expirent jamais et sont valables pour tous les services.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Pricing Section */}
-      <section id="pricing" className="py-20 lg:py-32">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <span className="text-sm font-medium text-gray-500 uppercase tracking-wider">Tarifs</span>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-gray-900 mt-3 mb-4">
-              Simple et transparent
-            </h2>
-            <p className="text-base text-gray-600 leading-relaxed">
-              Choisissez le plan qui correspond à vos besoins. Changez ou annulez à tout moment.
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            <div className="bg-white rounded-2xl p-8 border border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Crédits</h3>
-              <p className="text-sm text-gray-500 mb-6">Payez à l&apos;usage</p>
-              <div className="mb-6">
-                <span className="text-4xl font-bold text-gray-900">1€</span>
-                <span className="text-gray-500">/crédit</span>
-              </div>
-              <ul className="space-y-3 mb-8">
-                <li className="flex items-center gap-3 text-sm text-gray-600">
-                  <svg className="w-4 h-4 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  1 crédit = 1 avatar ou vidéo
-                </li>
-                <li className="flex items-center gap-3 text-sm text-gray-600">
-                  <svg className="w-4 h-4 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  Crédits valables à vie
-                </li>
-                <li className="flex items-center gap-3 text-sm text-gray-600">
-                  <svg className="w-4 h-4 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  Support par email
-                </li>
+              <h3 className="text-2xl font-bold mb-4">Digital Success Academy</h3>
+              <p className="text-gray-400 mb-6">Formation complète par Ayoub Rehane. 48 modules, 200+ vidéos.</p>
+              <ul className="space-y-3 text-sm text-gray-300 mb-8">
+                <li>✓ 48 modules complets</li>
+                <li>✓ 200+ vidéos</li>
+                <li>✓ MRR inclus (revends à 100%)</li>
               </ul>
-              <Link 
-                href="/signup"
-                className="block w-full text-center py-3 rounded-full border border-gray-200 text-gray-900 font-medium hover:bg-gray-50 transition-colors"
-              >
-                Acheter des crédits
-              </Link>
+              <div className="flex items-center justify-between">
+                <span className="text-3xl font-bold">997€</span>
+                <span className="credit-badge px-3 py-1 rounded-full text-xs font-medium">-10€/mois</span>
+              </div>
+              <button onClick={openModal} className="w-full mt-6 btn-primary py-3 rounded-xl font-medium">Choisir DSA</button>
             </div>
             
-            <div className="bg-gray-900 rounded-2xl p-8 text-white relative">
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                <span className="bg-white text-gray-900 text-xs font-medium px-3 py-1 rounded-full">
-                  Populaire
-                </span>
+            {/* ASA */}
+            <div className="glass rounded-3xl p-8 card-hover card-animate opacity-0 translate-y-5">
+              <div className="flex justify-between items-start mb-4">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-400 to-cyan-500 flex items-center justify-center text-2xl font-bold">ASA</div>
+                <span className="credit-badge px-3 py-1 rounded-full text-xs font-medium">SHORTS</span>
               </div>
-              <h3 className="text-lg font-semibold mb-2">Pro</h3>
-              <p className="text-sm text-gray-400 mb-6">Pour les créateurs réguliers</p>
-              <div className="mb-6">
-                <span className="text-4xl font-bold">45€</span>
+              <h3 className="text-2xl font-bold mb-4">Advanced Success Academy</h3>
+              <p className="text-gray-400 mb-6">Focus YouTube Shorts et batching. 45-60 modules.</p>
+              <ul className="space-y-3 text-sm text-gray-300 mb-8">
+                <li>✓ Focus YouTube Shorts</li>
+                <li>✓ Stratégies batching</li>
+                <li>✓ MRR inclus</li>
+              </ul>
+              <div className="flex items-center justify-between">
+                <span className="text-3xl font-bold">497€</span>
+                <span className="credit-badge px-3 py-1 rounded-full text-xs font-medium">-5€/mois</span>
+              </div>
+              <button onClick={openModal} className="w-full mt-6 btn-primary py-3 rounded-xl font-medium">Choisir ASA</button>
+            </div>
+            
+            {/* Code Liberté */}
+            <div className="glass rounded-3xl p-8 card-hover card-animate opacity-0 translate-y-5">
+              <div className="flex justify-between items-start mb-4">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-400 to-pink-500 flex items-center justify-center text-2xl font-bold">CL</div>
+                <span className="credit-badge px-3 py-1 rounded-full text-xs font-medium">PLR</span>
+              </div>
+              <h3 className="text-2xl font-bold mb-4">Code Liberté</h3>
+              <p className="text-gray-400 mb-6">18 modules + 20 PLR products prêts à vendre.</p>
+              <ul className="space-y-3 text-sm text-gray-300 mb-8">
+                <li>✓ 18 modules complets</li>
+                <li>✓ 20 PLR products</li>
+                <li>✓ MRR inclus</li>
+              </ul>
+              <div className="flex items-center justify-between">
+                <span className="text-3xl font-bold">350€</span>
+                <span className="credit-badge px-3 py-1 rounded-full text-xs font-medium">-5€/mois</span>
+              </div>
+              <button onClick={openModal} className="w-full mt-6 btn-primary py-3 rounded-xl font-medium">Choisir Code Liberté</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing Calculator Section */}
+      <section id="pricing" className="py-32 bg-gradient-to-b from-gray-900 to-black">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-20">
+            <h2 className="text-5xl md:text-6xl font-bold mb-6">Calcule ton <span className="gradient-text">économie</span></h2>
+            <p className="text-xl text-gray-400 max-w-2xl mx-auto">Plus tu achètes de formations, plus ton abonnement est bas</p>
+          </div>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            {/* Calculateur */}
+            <div className="glass rounded-3xl p-8">
+              <h3 className="text-xl font-bold mb-6">Mes formations</h3>
+              
+              <label className="flex items-center gap-4 p-4 bg-white/[0.03] rounded-xl cursor-pointer mb-3 hover:bg-white/[0.05] transition">
+                <input 
+                  type="checkbox" 
+                  checked={formations.dsa}
+                  onChange={(e) => setFormations({...formations, dsa: e.target.checked})}
+                  className="w-5 h-5 accent-purple-500"
+                />
+                <div className="flex-1">
+                  <div className="font-semibold">DSA</div>
+                  <div className="text-sm text-gray-400">997€</div>
+                </div>
+                <span className="text-green-500 font-semibold">-10€</span>
+              </label>
+              
+              <label className="flex items-center gap-4 p-4 bg-white/[0.03] rounded-xl cursor-pointer mb-3 hover:bg-white/[0.05] transition">
+                <input 
+                  type="checkbox" 
+                  checked={formations.asa}
+                  onChange={(e) => setFormations({...formations, asa: e.target.checked})}
+                  className="w-5 h-5 accent-purple-500"
+                />
+                <div className="flex-1">
+                  <div className="font-semibold">ASA</div>
+                  <div className="text-sm text-gray-400">497€</div>
+                </div>
+                <span className="text-green-500 font-semibold">-5€</span>
+              </label>
+              
+              <label className="flex items-center gap-4 p-4 bg-white/[0.03] rounded-xl cursor-pointer mb-3 hover:bg-white/[0.05] transition">
+                <input 
+                  type="checkbox" 
+                  checked={formations.code}
+                  onChange={(e) => setFormations({...formations, code: e.target.checked})}
+                  className="w-5 h-5 accent-purple-500"
+                />
+                <div className="flex-1">
+                  <div className="font-semibold">Code Liberté</div>
+                  <div className="text-sm text-gray-400">350€</div>
+                </div>
+                <span className="text-green-500 font-semibold">-5€</span>
+              </label>
+              
+              <div className="mt-6 pt-6 border-t border-white/10">
+                <div className="flex justify-between mb-2 text-gray-400">
+                  <span>Prix de base</span>
+                  <span>30€/mois</span>
+                </div>
+                <div className="flex justify-between text-green-500">
+                  <span>Réductions cumulées</span>
+                  <span>-{discount}€</span>
+                </div>
+              </div>
+            </div>
+            
+            {/* Résultat */}
+            <div className="glass rounded-3xl p-8 bg-gradient-to-br from-purple-500/10 to-pink-500/10 border-purple-500/30" style={{ background: 'linear-gradient(135deg, rgba(99,102,241,0.1), rgba(168,85,247,0.1))', borderColor: 'rgba(99,102,241,0.3)' }}>
+              <h3 className="text-xl font-bold mb-6">Ton abonnement</h3>
+              
+              <div className="mb-4">
+                <span className="text-6xl font-bold gradient-text">{finalPrice}€</span>
+                {discount > 0 && <span className="text-2xl text-gray-400 line-through ml-2">30€</span>}
                 <span className="text-gray-400">/mois</span>
               </div>
-              <ul className="space-y-3 mb-8">
-                <li className="flex items-center gap-3 text-sm text-gray-300">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  30 crédits/mois inclus
-                </li>
-                <li className="flex items-center gap-3 text-sm text-gray-300">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  Crédits reportés
-                </li>
-                <li className="flex items-center gap-3 text-sm text-gray-300">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  Priorité de traitement
-                </li>
-                <li className="flex items-center gap-3 text-sm text-gray-300">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  Support prioritaire
-                </li>
-              </ul>
-              <Link 
-                href="/signup"
-                className="block w-full text-center py-3 rounded-full bg-white text-gray-900 font-medium hover:bg-gray-100 transition-colors"
-              >
-                Commencer l&apos;essai
-              </Link>
-            </div>
-            
-            <div className="bg-white rounded-2xl p-8 border border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Annuel</h3>
-              <p className="text-sm text-gray-500 mb-6">Économisez 60€/an</p>
-              <div className="mb-6">
-                <span className="text-4xl font-bold text-gray-900">40€</span>
-                <span className="text-gray-500">/mois</span>
+              
+              <div className="text-green-500 font-semibold mb-8">
+                {savings > 0 ? `Économise ${savings}€/mois` : 'Prix de base'}
               </div>
-              <ul className="space-y-3 mb-8">
-                <li className="flex items-center gap-3 text-sm text-gray-600">
-                  <svg className="w-4 h-4 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  30 crédits/mois inclus
-                </li>
-                <li className="flex items-center gap-3 text-sm text-gray-600">
-                  <svg className="w-4 h-4 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  Facturation annuelle
-                </li>
-                <li className="flex items-center gap-3 text-sm text-gray-600">
-                  <svg className="w-4 h-4 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  Support VIP
-                </li>
-                <li className="flex items-center gap-3 text-sm text-gray-600">
-                  <svg className="w-4 h-4 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  API access (bientôt)
-                </li>
+              
+              <ul className="space-y-2 mb-8 text-gray-400 text-sm">
+                <li className="flex items-center gap-2"><span className="text-green-500">✓</span> Avatar IA personnalisé</li>
+                <li className="flex items-center gap-2"><span className="text-green-500">✓</span> 10 vidéos/mois incluses</li>
+                <li className="flex items-center gap-2"><span className="text-green-500">✓</span> 12 styles d&apos;avatars</li>
+                <li className="flex items-center gap-2"><span className="text-green-500">✓</span> Support prioritaire</li>
               </ul>
-              <Link 
-                href="/signup"
-                className="block w-full text-center py-3 rounded-full border border-gray-200 text-gray-900 font-medium hover:bg-gray-50 transition-colors"
-              >
-                Souscrire
-              </Link>
+              
+              <button onClick={openModal} className="w-full btn-primary py-4 rounded-xl font-medium">Commencer avec ce tarif</button>
             </div>
+          </div>
+          
+          {/* Garanties */}
+          <div className="flex justify-center gap-8 mt-12 flex-wrap">
+            <div className="flex items-center gap-2 text-sm text-gray-400"><span className="text-green-500">✓</span> Annulable n&apos;importe quand</div>
+            <div className="flex items-center gap-2 text-sm text-gray-400"><span className="text-green-500">✓</span> Pas de carte requise</div>
+            <div className="flex items-center gap-2 text-sm text-gray-400"><span className="text-green-500">✓</span> 30j satisfait remboursé</div>
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 lg:py-32">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-gray-900 rounded-3xl p-12 lg:p-20 text-center text-white">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6">
-              Prêt à transformer votre contenu ?
-            </h2>
-            <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-10">
-              Rejoignez des centaines de créateurs qui utilisent Bocco.ai pour développer leur business.
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link 
-                href="/signup"
-                className="bg-white text-gray-900 px-8 py-3 rounded-full text-base font-medium hover:bg-gray-100 transition-colors inline-flex items-center"
-              >
-                Commencer gratuitement
-                <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </svg>
-              </Link>
-              <Link 
-                href="/pricing"
-                className="border border-gray-700 text-white px-8 py-3 rounded-full text-base font-medium hover:bg-gray-800 transition-colors"
-              >
-                Voir les tarifs
-              </Link>
+      {/* Contact Section */}
+      <section id="contact" className="py-32">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="glass rounded-3xl p-8 md:p-12">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl font-bold mb-4">Me <span className="gradient-text">contacter</span></h2>
+              <p className="text-gray-400">Une question ? Je te réponds rapidement.</p>
+            </div>
+            <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); alert('Message envoyé !'); }}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <input type="text" placeholder="Prénom" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-purple-500 outline-none" required />
+                <input type="text" placeholder="Nom" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-purple-500 outline-none" required />
+              </div>
+              <input type="email" placeholder="Email" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-purple-500 outline-none" required />
+              <textarea placeholder="Ton message" rows={4} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-purple-500 outline-none" required></textarea>
+              <button type="submit" className="w-full btn-primary py-4 rounded-xl font-medium text-lg">Envoyer</button>
+            </form>
+            <div className="mt-8 text-center">
+              <p className="text-gray-400">Ou contacte-moi directement :</p>
+              <a href="mailto:contact@avatarstudio.com" className="text-purple-400 hover:text-purple-300">contact@avatarstudio.com</a>
             </div>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="py-12 border-t border-gray-100">
+      <footer className="py-12 border-t border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-gray-900 flex items-center justify-center">
-                <span className="text-white font-bold text-sm">B</span>
-              </div>
-              <span className="font-semibold text-gray-900">Bocco.ai</span>
+          <div className="flex flex-col md:flex-row justify-between items-center">
+            <div className="flex items-center space-x-2 mb-4 md:mb-0">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-blue-500"></div>
+              <span className="text-xl font-semibold">AvatarStudio</span>
             </div>
-            <div className="flex items-center gap-6 text-sm text-gray-600">
-              <Link href="/privacy" className="hover:text-gray-900">Confidentialité</Link>
-              <Link href="/terms" className="hover:text-gray-900">CGU</Link>
-              <Link href="/contact" className="hover:text-gray-900">Contact</Link>
-            </div>
-            <p className="text-sm text-gray-500">© 2026 Bocco.ai</p>
+            <p className="text-gray-400 text-sm">© 2026 AvatarStudio. Tous droits réservés.</p>
           </div>
         </div>
       </footer>
+
+      {/* Modal */}
+      {modalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm" onClick={closeModal}>
+          <div className="glass rounded-3xl p-8 max-w-md w-full mx-4" onClick={(e) => e.stopPropagation()}>
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-2xl font-bold">Bientôt disponible</h3>
+              <button onClick={closeModal} className="text-gray-400 hover:text-white text-2xl">×</button>
+            </div>
+            <p className="text-gray-400 mb-6">Cette fonctionnalité est en cours de développement. Laisse ton email pour être informé du lancement !</p>
+            <form onSubmit={(e) => { e.preventDefault(); closeModal(); alert('Merci ! On te tient au courant.'); }} className="space-y-4">
+              <input type="email" placeholder="ton@email.com" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-purple-500 outline-none" required />
+              <button type="submit" className="w-full btn-primary py-3 rounded-xl font-medium">Me tenir informé</button>
+            </form>
+          </div>
+        </div>
+      )}
     </main>
-  )
+  );
 }
