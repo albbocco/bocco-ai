@@ -207,9 +207,7 @@ export default function Home() {
               <ul className="space-y-3 mb-8 text-sm text-gray-600">
                 <li className="flex items-center gap-2"><span className="text-green-600">✓</span> 15 crédits/mois</li>
                 <li className="flex items-center gap-2"><span className="text-green-600">✓</span> 1 avatar</li>
-                <li className="flex items-center gap-2"><span className="text-green-600">✓</span> Export HD</li>
-                <li className="flex items-center gap-2"><span className="text-green-600">✓</span> Support email</li>
-                <li className="flex items-center gap-2 text-gray-400 text-xs mt-4 pt-4 border-t"><span>ℹ️</span> 1 crédit supplémentaire = 3€</li>
+                <li className="flex items-center gap-2"><span className="text-green-600">✓</span> 3€/crédit supp</li>
               </ul>
               <button onClick={openModal} className="w-full py-3 rounded-xl font-medium border-2 border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white transition">Choisir Starter</button>
             </div>
@@ -229,11 +227,9 @@ export default function Home() {
                 <span className="text-gray-400">/mois</span>
               </div>
               <ul className="space-y-3 mb-8 text-sm text-gray-300">
-                <li className="flex items-center gap-2"><span className="text-green-400">✓</span> 30 crédits/mois (1 vidéo/jour)</li>
+                <li className="flex items-center gap-2"><span className="text-green-400">✓</span> 30 crédits/mois</li>
                 <li className="flex items-center gap-2"><span className="text-green-400">✓</span> 3 avatars</li>
-                <li className="flex items-center gap-2"><span className="text-green-400">✓</span> Export HD + 4K</li>
-                <li className="flex items-center gap-2"><span className="text-green-400">✓</span> Support prioritaire</li>
-                <li className="flex items-center gap-2 text-gray-400 text-xs mt-4 pt-4 border-t border-gray-700"><span>ℹ️</span> 1 crédit supplémentaire = 2,50€</li>
+                <li className="flex items-center gap-2"><span className="text-green-400">✓</span> 2,50€/crédit supp</li>
               </ul>
               <button onClick={openModal} className="w-full bg-white text-gray-900 py-3 rounded-xl font-medium hover:bg-gray-100 transition">Choisir Pro</button>
             </div>
@@ -252,9 +248,7 @@ export default function Home() {
               <ul className="space-y-3 mb-8 text-sm text-gray-600">
                 <li className="flex items-center gap-2"><span className="text-green-600">✓</span> 100 crédits/mois</li>
                 <li className="flex items-center gap-2"><span className="text-green-600">✓</span> 10 avatars</li>
-                <li className="flex items-center gap-2"><span className="text-green-600">✓</span> 5 utilisateurs</li>
-                <li className="flex items-center gap-2"><span className="text-green-600">✓</span> API access</li>
-                <li className="flex items-center gap-2 text-gray-400 text-xs mt-4 pt-4 border-t"><span>ℹ️</span> 1 crédit supplémentaire = 2€</li>
+                <li className="flex items-center gap-2"><span className="text-green-600">✓</span> 2€/crédit supp</li>
               </ul>
               <button onClick={openModal} className="w-full py-3 rounded-xl font-medium border-2 border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white transition">Choisir Business</button>
             </div>
