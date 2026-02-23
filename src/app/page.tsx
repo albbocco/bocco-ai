@@ -171,7 +171,7 @@ export default function Home() {
             </div>
 
             <div className="text-center">
-              <p className="text-gray-500 text-sm">💡 Ton abonnement inclut 10 crédits/mois. Tu peux acheter des crédits supplémentaires à tout moment.</p>
+              <p className="text-gray-500 text-sm">💡 Ton abonnement inclut 30 crédits/mois (1 vidéo par jour). Tu peux acheter des crédits supplémentaires à tout moment.</p>
             </div>
           </div>
         </div>
@@ -345,7 +345,7 @@ export default function Home() {
               </div>
               
               <ul className="space-y-2 mb-8 text-gray-300 text-sm">
-                <li className="flex items-center gap-2"><span className="text-green-400">✓</span> 10 crédits/mois inclus</li>
+                <li className="flex items-center gap-2"><span className="text-green-400">✓</span> 30 crédits/mois inclus (1 vidéo/jour)</li>
                 <li className="flex items-center gap-2"><span className="text-green-400">✓</span> Avatar IA personnalisé</li>
                 <li className="flex items-center gap-2"><span className="text-green-400">✓</span> Support prioritaire</li>
                 <li className="flex items-center gap-2"><span className="text-green-400">✓</span> Annulable à tout moment</li>
@@ -361,12 +361,14 @@ export default function Home() {
               <div className="flex flex-col md:flex-row items-center justify-between gap-6">
                 <div>
                   <h3 className="text-2xl font-bold mb-2 text-gray-900">Engagement annuel</h3>
-                  <p className="text-gray-600">Paiement annuel pour économiser encore plus</p>
+                  <p className="text-gray-600">Paiement annuel avec réductions formations incluses</p>
                 </div>
                 <div className="text-center md:text-right">
-                  <div className="text-4xl font-bold text-gray-900">{(finalPrice - 10) * 12}€<span className="text-lg text-gray-500 font-normal">/an</span></div>
-                  <div className="text-green-600 font-medium">Économise 10€/mois (120€/an)</div>
-                  <div className="text-sm text-gray-500">Soit {finalPrice - 10}€/mois</div>
+                  <div className="text-4xl font-bold text-gray-900">{finalPrice * 12}€<span className="text-lg text-gray-500 font-normal">/an</span></div>
+                  <div className="text-green-600 font-medium">
+                    {discount > 0 ? `Économise ${discount * 12}€/an grâce aux formations` : 'Sans réduction'}
+                  </div>
+                  <div className="text-sm text-gray-500">Soit {finalPrice}€/mois facturé annuellement</div>
                 </div>
               </div>
             </div>
