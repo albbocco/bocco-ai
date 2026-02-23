@@ -129,6 +129,21 @@ export default function Home() {
               <p className="text-gray-600">Disponible uniquement après abonnement. Aucun engagement, tu ne paies que ce que tu utilises.</p>
             </div>
             
+            <div className="bg-gray-100 rounded-2xl p-8 max-w-3xl mx-auto mb-8">
+              <div className="flex items-center justify-center gap-3 mb-4">
+                <span className="text-4xl">🎁</span>
+                <h4 className="text-2xl font-bold text-gray-900">30 crédits offerts par mois</h4>
+              </div>
+              <p className="text-center text-gray-700 text-lg mb-4">
+                Avec ton abonnement, tu reçois <strong>30 crédits chaque mois</strong> — soit <strong>1 vidéo par jour</strong> pendant 30 jours.
+              </p>
+              <div className="flex justify-center gap-6 text-sm text-gray-600">
+                <span>✓ 30 avatars possibles</span>
+                <span>✓ ou 30 vidéos courtes</span>
+                <span>✓ ou 15 vidéos longues</span>
+              </div>
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-12">
               <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
                 <h4 className="font-bold text-lg mb-4 text-gray-900">Coût des actions</h4>
@@ -148,30 +163,18 @@ export default function Home() {
               </div>
               
               <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
-                <h4 className="font-bold text-lg mb-4 text-gray-900">Packs de crédits</h4>
-                <ul className="space-y-4">
-                  <li className="flex justify-between items-center">
-                    <span className="text-gray-600">12€</span>
-                    <span className="font-bold text-gray-900">12 crédits</span>
-                  </li>
-                  <li className="flex justify-between items-center">
-                    <span className="text-gray-600">35€</span>
-                    <span className="font-bold text-gray-900">40 crédits <span className="text-green-600 text-sm">+4 bonus</span></span>
-                  </li>
-                  <li className="flex justify-between items-center">
-                    <span className="text-gray-600">60€</span>
-                    <span className="font-bold text-gray-900">75 crédits <span className="text-green-600 text-sm">+15 bonus</span></span>
-                  </li>
-                  <li className="flex justify-between items-center">
-                    <span className="text-gray-600">120€</span>
-                    <span className="font-bold text-gray-900">150 crédits <span className="text-green-600 text-sm">+30 bonus</span></span>
-                  </li>
-                </ul>
+                <h4 className="font-bold text-lg mb-4 text-gray-900">Crédits supplémentaires</h4>
+                <p className="text-gray-600 mb-4">
+                  Tu as besoin de plus de 30 crédits ce mois-ci ?
+                </p>
+                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                  <span className="text-gray-700">Ajouter des crédits</span>
+                  <span className="font-bold text-gray-900">1€ = 1 crédit</span>
+                </div>
+                <p className="text-sm text-gray-500 mt-4">
+                  Achat à l'unité, sans minimum. Utilisables immédiatement.
+                </p>
               </div>
-            </div>
-
-            <div className="text-center">
-              <p className="text-gray-500 text-sm">💡 Ton abonnement inclut 30 crédits/mois (1 vidéo par jour). Tu peux acheter des crédits supplémentaires à tout moment.</p>
             </div>
           </div>
         </div>
@@ -355,25 +358,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Annual Pricing */}
-          <div className="mt-12 max-w-4xl mx-auto">
-            <div className="bg-gray-50 rounded-2xl p-8 border border-gray-200">
-              <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-                <div>
-                  <h3 className="text-2xl font-bold mb-2 text-gray-900">Engagement annuel</h3>
-                  <p className="text-gray-600">Paiement annuel avec réductions formations incluses</p>
-                </div>
-                <div className="text-center md:text-right">
-                  <div className="text-4xl font-bold text-gray-900">{finalPrice * 12}€<span className="text-lg text-gray-500 font-normal">/an</span></div>
-                  <div className="text-green-600 font-medium">
-                    {discount > 0 ? `Économise ${discount * 12}€/an grâce aux formations` : 'Sans réduction'}
-                  </div>
-                  <div className="text-sm text-gray-500">Soit {finalPrice}€/mois facturé annuellement</div>
-                </div>
-              </div>
-            </div>
-          </div>
-          
           {/* Garanties */}
           <div className="flex justify-center gap-8 mt-12 flex-wrap">
             <div className="flex items-center gap-2 text-sm text-gray-600"><span className="text-green-600">✓</span> Annulable n&apos;importe quand</div>
