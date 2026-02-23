@@ -5,16 +5,12 @@ import { useState, useEffect } from 'react';
 export default function Home() {
   const [modalOpen, setModalOpen] = useState(false);
   const [formations, setFormations] = useState({
-    dsa: false,
-    asa: false,
     code: false
   });
 
   const updatePrice = () => {
     let discount = 0;
-    if (formations.dsa) discount += 5;
-    if (formations.asa) discount += 3;
-    if (formations.code) discount += 2;
+    if (formations.code) discount += 10;
     return { discount };
   };
 
@@ -142,35 +138,7 @@ export default function Home() {
             <h3 className="text-xl font-bold mb-6 text-gray-900 text-center">Calcule ta réduction</h3>
             
             <div className="space-y-4 mb-8">
-              <label className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl cursor-pointer hover:bg-gray-100 transition">
-                <input 
-                  type="checkbox" 
-                  checked={formations.dsa}
-                  onChange={(e) => setFormations({...formations, dsa: e.target.checked})}
-                  className="w-5 h-5 accent-gray-900"
-                />
-                <div className="flex-1">
-                  <div className="font-semibold text-gray-900">DSA (Digital Success Academy)</div>
-                  <div className="text-sm text-gray-500">997€</div>
-                </div>
-                <span className="text-green-600 font-semibold">-5€/mois</span>
-              </label>
-              
-              <label className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl cursor-pointer hover:bg-gray-100 transition">
-                <input 
-                  type="checkbox" 
-                  checked={formations.asa}
-                  onChange={(e) => setFormations({...formations, asa: e.target.checked})}
-                  className="w-5 h-5 accent-gray-900"
-                />
-                <div className="flex-1">
-                  <div className="font-semibold text-gray-900">ASA (Advanced Success Academy)</div>
-                  <div className="text-sm text-gray-500">497€</div>
-                </div>
-                <span className="text-green-600 font-semibold">-3€/mois</span>
-              </label>
-              
-              <label className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl cursor-pointer hover:bg-gray-100 transition">
+              <label className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl cursor-pointer hover:bg-gray-100 transition border-2 border-gray-900">
                 <input 
                   type="checkbox" 
                   checked={formations.code}
@@ -181,7 +149,7 @@ export default function Home() {
                   <div className="font-semibold text-gray-900">Code Liberté</div>
                   <div className="text-sm text-gray-500">350€</div>
                 </div>
-                <span className="text-green-600 font-semibold">-2€/mois</span>
+                <span className="text-green-600 font-bold">-10€/mois</span>
               </label>
             </div>
 
@@ -272,63 +240,24 @@ export default function Home() {
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">Achète une formation, réduis ton abonnement à vie</p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {/* DSA */}
-            <div className="bg-gray-50 rounded-3xl p-8 shadow-lg card-animate opacity-0 translate-y-5">
-              <div className="flex justify-between items-start mb-4">
-                <div className="w-16 h-16 rounded-2xl bg-gray-900 flex items-center justify-center text-2xl font-bold text-white">DSA</div>
-                <span className="bg-gray-900 text-white px-3 py-1 rounded-full text-xs font-medium">POPULAIRE</span>
-              </div>
-              <h3 className="text-2xl font-bold mb-4 text-gray-900">Digital Success Academy</h3>
-              <p className="text-gray-600 mb-6">Formation complète par Ayoub Rehane. 48 modules, 200+ vidéos.</p>
-              <ul className="space-y-3 text-sm text-gray-600 mb-8">
-                <li>✓ 48 modules complets</li>
-                <li>✓ 200+ vidéos</li>
-                <li>✓ MRR inclus (revends à 100%)</li>
-              </ul>
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-3xl font-bold text-gray-900">997€</span>
-                <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-medium">-5€/mois sur ton abo</span>
-              </div>
-              <button onClick={openModal} className="w-full btn-primary py-3 rounded-xl font-medium">Acheter DSA</button>
-            </div>
-            
-            {/* ASA */}
-            <div className="bg-gray-50 rounded-3xl p-8 shadow-lg card-animate opacity-0 translate-y-5">
-              <div className="flex justify-between items-start mb-4">
-                <div className="w-16 h-16 rounded-2xl bg-gray-700 flex items-center justify-center text-2xl font-bold text-white">ASA</div>
-                <span className="bg-gray-200 text-gray-800 px-3 py-1 rounded-full text-xs font-medium">SHORTS</span>
-              </div>
-              <h3 className="text-2xl font-bold mb-4 text-gray-900">Advanced Success Academy</h3>
-              <p className="text-gray-600 mb-6">Focus YouTube Shorts et batching. 45-60 modules.</p>
-              <ul className="space-y-3 text-sm text-gray-600 mb-8">
-                <li>✓ Focus YouTube Shorts</li>
-                <li>✓ Stratégies batching</li>
-                <li>✓ MRR inclus</li>
-              </ul>
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-3xl font-bold text-gray-900">497€</span>
-                <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-medium">-3€/mois sur ton abo</span>
-              </div>
-              <button onClick={openModal} className="w-full btn-primary py-3 rounded-xl font-medium">Acheter ASA</button>
-            </div>
-            
+          <div className="max-w-lg mx-auto">
             {/* Code Liberté */}
-            <div className="bg-gray-50 rounded-3xl p-8 shadow-lg card-animate opacity-0 translate-y-5">
+            <div className="bg-gray-50 rounded-3xl p-8 shadow-lg card-animate opacity-0 translate-y-5 border-2 border-gray-900">
               <div className="flex justify-between items-start mb-4">
-                <div className="w-16 h-16 rounded-2xl bg-gray-500 flex items-center justify-center text-2xl font-bold text-white">CL</div>
-                <span className="bg-gray-200 text-gray-800 px-3 py-1 rounded-full text-xs font-medium">PLR</span>
+                <div className="w-16 h-16 rounded-2xl bg-gray-900 flex items-center justify-center text-2xl font-bold text-white">CL</div>
+                <span className="bg-gray-900 text-white px-3 py-1 rounded-full text-xs font-medium">FORMATION EXCLUSIVE</span>
               </div>
               <h3 className="text-2xl font-bold mb-4 text-gray-900">Code Liberté</h3>
               <p className="text-gray-600 mb-6">18 modules + 20 PLR products prêts à vendre.</p>
               <ul className="space-y-3 text-sm text-gray-600 mb-8">
                 <li>✓ 18 modules complets</li>
                 <li>✓ 20 PLR products</li>
-                <li>✓ MRR inclus</li>
+                <li>✓ MRR inclus (revends à 100%)</li>
+                <li className="font-bold text-gray-900">✓ -10€/mois sur ton abonnement bocco.ai</li>
               </ul>
               <div className="flex items-center justify-between mb-4">
                 <span className="text-3xl font-bold text-gray-900">350€</span>
-                <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-medium">-2€/mois sur ton abo</span>
+                <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-bold">-10€/mois à vie</span>
               </div>
               <button onClick={openModal} className="w-full btn-primary py-3 rounded-xl font-medium">Acheter Code Liberté</button>
             </div>
@@ -353,8 +282,8 @@ export default function Home() {
               <p className="text-gray-600">Tu peux acheter des crédits supplémentaires : 3€ sur Starter, 2,50€ sur Pro, 2€ sur Business. Ou upgrader ton plan.</p>
             </div>
             <div className="bg-white rounded-2xl p-6">
-              <h3 className="font-bold text-lg mb-2">Comment fonctionnent les réductions des formations ?</h3>
-              <p className="text-gray-600">Quand tu achètes une formation MRR, tu obtiens une réduction permanente sur ton abonnement bocco.ai. Ces réductions sont cumulables jusqu&apos;à -10€/mois.</p>
+              <h3 className="font-bold text-lg mb-2">Comment fonctionne la réduction de la formation ?</h3>
+              <p className="text-gray-600">Quand tu achètes la formation Code Liberté, tu obtiens une réduction permanente de -10€/mois sur ton abonnement bocco.ai.</p>
             </div>
             <div className="bg-white rounded-2xl p-6">
               <h3 className="font-bold text-lg mb-2">Puis-je annuler mon abonnement ?</h3>
