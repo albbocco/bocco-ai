@@ -332,12 +332,12 @@ export default function Home() {
             
             {/* Résultat */}
             <div className="bg-gray-900 rounded-3xl p-8 text-white">
-              <h3 className="text-xl font-bold mb-6">Ton abonnement mensuel</h3>
+              <h3 className="text-xl font-bold mb-6">Ton abonnement {formations.annual ? 'annuel' : 'mensuel'}</h3>
               
               <div className="mb-4">
-                <span className="text-6xl font-bold">{finalPrice}€</span>
-                {discount > 0 && <span className="text-2xl text-gray-400 line-through ml-2">60€</span>}
-                <span className="text-gray-400">/mois</span>
+                <span className="text-6xl font-bold">{formations.annual ? finalPrice * 12 : finalPrice}€</span>
+                {discount > 0 && <span className="text-2xl text-gray-400 line-through ml-2">{formations.annual ? '720€' : '60€'}</span>}
+                <span className="text-gray-400">/{formations.annual ? 'an' : 'mois'}</span>
               </div>
               
               <div className="text-green-400 font-semibold mb-8">
