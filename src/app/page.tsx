@@ -187,7 +187,7 @@ export default function Home() {
                   </li>
                 </ul>
                 <div className="mt-4 pt-4 border-t border-gray-100">
-                  <span className="text-sm text-gray-500">1 crédit = 1€ TTC</span>
+                  <span className="text-sm text-gray-500">1 crédit = 2€ TTC (hors abonnement)</span>
                 </div>
               </div>
               
@@ -198,7 +198,7 @@ export default function Home() {
                 </p>
                 <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
                   <span className="text-gray-700">Ajouter des crédits</span>
-                  <span className="font-bold text-gray-900">1€ = 1 crédit</span>
+                  <span className="font-bold text-gray-900">2€ = 1 crédit</span>
                 </div>
                 <p className="text-sm text-gray-500 mt-4">
                   Achat à l'unité, sans minimum. Utilisables immédiatement.
