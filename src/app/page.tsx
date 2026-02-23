@@ -199,11 +199,12 @@ export default function Home() {
                 <h3 className="text-xl font-bold text-gray-900 mb-2">Starter</h3>
                 <p className="text-sm text-gray-500">Pour tester</p>
               </div>
-              <div className="text-center mb-6">
+              <div className="text-center mb-2">
                 <span className="text-5xl font-bold text-gray-900">{starterPrice - discount}€</span>
                 {discount > 0 && <span className="text-xl text-gray-400 line-through ml-2">{starterPrice}€</span>}
                 <span className="text-gray-500">/mois</span>
               </div>
+              <p className="text-center text-sm text-gray-500 mb-6">ou {(starterPrice - discount) * 10}€/an (2 mois offerts)</p>
               <ul className="space-y-3 mb-8 text-sm text-gray-600">
                 <li className="flex items-center gap-2"><span className="text-green-600">✓</span> 15 crédits/mois</li>
                 <li className="flex items-center gap-2"><span className="text-green-600">✓</span> 1 avatar</li>
@@ -221,11 +222,12 @@ export default function Home() {
                 <h3 className="text-xl font-bold text-white mb-2">Pro</h3>
                 <p className="text-sm text-gray-400">Pour les créateurs</p>
               </div>
-              <div className="text-center mb-6">
+              <div className="text-center mb-2">
                 <span className="text-5xl font-bold text-white">{proPrice - discount}€</span>
                 {discount > 0 && <span className="text-xl text-gray-400 line-through ml-2">{proPrice}€</span>}
                 <span className="text-gray-400">/mois</span>
               </div>
+              <p className="text-center text-sm text-gray-400 mb-6">ou {(proPrice - discount) * 10}€/an (2 mois offerts)</p>
               <ul className="space-y-3 mb-8 text-sm text-gray-300">
                 <li className="flex items-center gap-2"><span className="text-green-400">✓</span> 30 crédits/mois</li>
                 <li className="flex items-center gap-2"><span className="text-green-400">✓</span> 3 avatars</li>
@@ -240,11 +242,12 @@ export default function Home() {
                 <h3 className="text-xl font-bold text-gray-900 mb-2">Business</h3>
                 <p className="text-sm text-gray-500">Pour les agences</p>
               </div>
-              <div className="text-center mb-6">
+              <div className="text-center mb-2">
                 <span className="text-5xl font-bold text-gray-900">{businessPrice - discount}€</span>
                 {discount > 0 && <span className="text-xl text-gray-400 line-through ml-2">{businessPrice}€</span>}
                 <span className="text-gray-500">/mois</span>
               </div>
+              <p className="text-center text-sm text-gray-500 mb-6">ou {(businessPrice - discount) * 10}€/an (2 mois offerts)</p>
               <ul className="space-y-3 mb-8 text-sm text-gray-600">
                 <li className="flex items-center gap-2"><span className="text-green-600">✓</span> 100 crédits/mois</li>
                 <li className="flex items-center gap-2"><span className="text-green-600">✓</span> 10 avatars</li>
