@@ -7,7 +7,8 @@ export default function Home() {
   const [formations, setFormations] = useState({
     dsa: false,
     asa: false,
-    code: false
+    code: false,
+    annual: false
   });
 
   const updatePrice = () => {
@@ -15,8 +16,9 @@ export default function Home() {
     if (formations.dsa) discount += 5;
     if (formations.asa) discount += 3;
     if (formations.code) discount += 2;
-    const finalPrice = Math.max(30, 45 - discount);
-    return { discount, finalPrice, savings: 45 - finalPrice };
+    if (formations.annual) discount += 10;
+    const finalPrice = Math.max(40, 60 - discount);
+    return { discount, finalPrice, savings: 60 - finalPrice };
   };
 
   const { discount, finalPrice, savings } = updatePrice();
@@ -111,7 +113,7 @@ export default function Home() {
             <div className="text-center p-8">
               <div className="w-16 h-16 rounded-2xl bg-gray-900 text-white flex items-center justify-center text-2xl font-bold mx-auto mb-6">2</div>
               <h3 className="text-xl font-bold mb-4 text-gray-900">Génère des vidéos</h3>
-              <p className="text-gray-600">Utilise tes crédits pour créer des vidéos faceless. 1 crédit = vidéo courte, 2 crédits = vidéo longue.</p>
+              <p className="text-gray-600">Utilise tes crédits pour créer des vidéos faceless. 1 crédit = 1 avatar OU 1 vidéo courte, 2 crédits = 1 vidéo longue.</p>
             </div>
             <div className="text-center p-8">
               <div className="w-16 h-16 rounded-2xl bg-gray-900 text-white flex items-center justify-center text-2xl font-bold mx-auto mb-6">3</div>
@@ -132,11 +134,7 @@ export default function Home() {
                 <h4 className="font-bold text-lg mb-4 text-gray-900">Coût des actions</h4>
                 <ul className="space-y-4">
                   <li className="flex justify-between items-center">
-                    <span className="text-gray-600">Création d&apos;avatar</span>
-                    <span className="font-bold text-gray-900">1 crédit</span>
-                  </li>
-                  <li className="flex justify-between items-center">
-                    <span className="text-gray-600">Vidéo courte (&lt;1min)</span>
+                    <span className="text-gray-600">1 avatar OU 1 vidéo courte</span>
                     <span className="font-bold text-gray-900">1 crédit</span>
                   </li>
                   <li className="flex justify-between items-center">
@@ -145,7 +143,7 @@ export default function Home() {
                   </li>
                 </ul>
                 <div className="mt-4 pt-4 border-t border-gray-100">
-                  <span className="text-sm text-gray-500">1 crédit = 1€</span>
+                  <span className="text-sm text-gray-500">1 crédit = 1€ TTC</span>
                 </div>
               </div>
               
@@ -153,27 +151,27 @@ export default function Home() {
                 <h4 className="font-bold text-lg mb-4 text-gray-900">Packs de crédits</h4>
                 <ul className="space-y-4">
                   <li className="flex justify-between items-center">
-                    <span className="text-gray-600">10€</span>
-                    <span className="font-bold text-gray-900">10 crédits</span>
+                    <span className="text-gray-600">12€</span>
+                    <span className="font-bold text-gray-900">12 crédits</span>
                   </li>
                   <li className="flex justify-between items-center">
-                    <span className="text-gray-600">30€</span>
-                    <span className="font-bold text-gray-900">35 crédits <span className="text-green-600 text-sm">+5 bonus</span></span>
+                    <span className="text-gray-600">35€</span>
+                    <span className="font-bold text-gray-900">40 crédits <span className="text-green-600 text-sm">+4 bonus</span></span>
                   </li>
                   <li className="flex justify-between items-center">
-                    <span className="text-gray-600">50€</span>
-                    <span className="font-bold text-gray-900">65 crédits <span className="text-green-600 text-sm">+15 bonus</span></span>
+                    <span className="text-gray-600">60€</span>
+                    <span className="font-bold text-gray-900">75 crédits <span className="text-green-600 text-sm">+15 bonus</span></span>
                   </li>
                   <li className="flex justify-between items-center">
-                    <span className="text-gray-600">100€</span>
-                    <span className="font-bold text-gray-900">150 crédits <span className="text-green-600 text-sm">+50 bonus</span></span>
+                    <span className="text-gray-600">120€</span>
+                    <span className="font-bold text-gray-900">150 crédits <span className="text-green-600 text-sm">+30 bonus</span></span>
                   </li>
                 </ul>
               </div>
             </div>
 
             <div className="text-center">
-              <p className="text-gray-500 text-sm">💡 Ton abonnement inclut 30 crédits/mois. Tu peux acheter des crédits supplémentaires à tout moment.</p>
+              <p className="text-gray-500 text-sm">💡 Ton abonnement inclut 10 crédits/mois. Tu peux acheter des crédits supplémentaires à tout moment.</p>
             </div>
           </div>
         </div>
@@ -305,11 +303,25 @@ export default function Home() {
                 </div>
                 <span className="text-green-600 font-semibold">-2€</span>
               </label>
+
+              <label className="flex items-center gap-4 p-4 bg-gray-100 rounded-xl cursor-pointer mb-3 hover:bg-gray-200 transition border border-gray-200">
+                <input 
+                  type="checkbox" 
+                  checked={formations.annual}
+                  onChange={(e) => setFormations({...formations, annual: e.target.checked})}
+                  className="w-5 h-5 accent-gray-900"
+                />
+                <div className="flex-1">
+                  <div className="font-semibold text-gray-900">Engagement annuel</div>
+                  <div className="text-sm text-gray-500">Paiement annuel</div>
+                </div>
+                <span className="text-green-600 font-semibold">-10€</span>
+              </label>
               
               <div className="mt-6 pt-6 border-t border-gray-200">
                 <div className="flex justify-between mb-2 text-gray-600">
                   <span>Prix de base</span>
-                  <span>45€/mois</span>
+                  <span>60€/mois</span>
                 </div>
                 <div className="flex justify-between text-green-600">
                   <span>Réductions cumulées</span>
@@ -324,7 +336,7 @@ export default function Home() {
               
               <div className="mb-4">
                 <span className="text-6xl font-bold">{finalPrice}€</span>
-                {discount > 0 && <span className="text-2xl text-gray-400 line-through ml-2">45€</span>}
+                {discount > 0 && <span className="text-2xl text-gray-400 line-through ml-2">60€</span>}
                 <span className="text-gray-400">/mois</span>
               </div>
               
@@ -333,7 +345,7 @@ export default function Home() {
               </div>
               
               <ul className="space-y-2 mb-8 text-gray-300 text-sm">
-                <li className="flex items-center gap-2"><span className="text-green-400">✓</span> 30 crédits/mois inclus</li>
+                <li className="flex items-center gap-2"><span className="text-green-400">✓</span> 10 crédits/mois inclus</li>
                 <li className="flex items-center gap-2"><span className="text-green-400">✓</span> Avatar IA personnalisé</li>
                 <li className="flex items-center gap-2"><span className="text-green-400">✓</span> Support prioritaire</li>
                 <li className="flex items-center gap-2"><span className="text-green-400">✓</span> Annulable à tout moment</li>
@@ -352,9 +364,9 @@ export default function Home() {
                   <p className="text-gray-600">Paiement annuel pour économiser encore plus</p>
                 </div>
                 <div className="text-center md:text-right">
-                  <div className="text-4xl font-bold text-gray-900">{Math.round(finalPrice * 0.9 * 12)}€<span className="text-lg text-gray-500 font-normal">/an</span></div>
-                  <div className="text-green-600 font-medium">Économise 10% ({Math.round(finalPrice * 0.1 * 12)}€)</div>
-                  <div className="text-sm text-gray-500">Soit {Math.round(finalPrice * 0.9)}€/mois</div>
+                  <div className="text-4xl font-bold text-gray-900">{(finalPrice - 10) * 12}€<span className="text-lg text-gray-500 font-normal">/an</span></div>
+                  <div className="text-green-600 font-medium">Économise 10€/mois (120€/an)</div>
+                  <div className="text-sm text-gray-500">Soit {finalPrice - 10}€/mois</div>
                 </div>
               </div>
             </div>
