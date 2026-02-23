@@ -114,7 +114,7 @@ export default function Home() {
             <div className="text-center p-8 card-animate opacity-0 translate-y-5">
               <div className="w-16 h-16 rounded-2xl bg-gray-900 text-white flex items-center justify-center text-2xl font-bold mx-auto mb-6">2</div>
               <h3 className="text-xl font-bold mb-4 text-gray-900">Clone une vidéo virale</h3>
-              <p className="text-gray-600">Colle le lien d&apos;une vidéo qui fonctionne. Notre IA recrée la même vidéo avec ton avatar.</p>
+              <p className="text-gray-600">Colle le lien d&apos;une vidéo qui vend une formation. Notre IA recrée la même vidéo avec ton avatar et ta formation.</p>
             </div>
             <div className="text-center p-8 card-animate opacity-0 translate-y-5">
               <div className="w-16 h-16 rounded-2xl bg-gray-900 text-white flex items-center justify-center text-2xl font-bold mx-auto mb-6">3</div>
