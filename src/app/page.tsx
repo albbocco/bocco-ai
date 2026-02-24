@@ -38,7 +38,7 @@ export default function Home() {
   const closeModal = () => setModalOpen(false);
 
   // Prix de base
-  const starterPrice = 14;
+  const starterPrice = 24;
   const proPrice = 69;
   const businessPrice = 159;
 
