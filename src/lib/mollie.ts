@@ -15,8 +15,8 @@ export const PLANS = {
   starter: {
     id: 'starter',
     name: 'Starter',
-    price: 29,
-    credits: 10,
+    price: 14,
+    credits: 5,
     extraCreditPrice: 3,
   },
   pro: {

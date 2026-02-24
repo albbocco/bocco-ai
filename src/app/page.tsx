@@ -38,7 +38,7 @@ export default function Home() {
   const closeModal = () => setModalOpen(false);
 
   // Prix de base
-  const starterPrice = 29;
+  const starterPrice = 14;
   const proPrice = 69;
   const businessPrice = 159;
 
@@ -205,7 +205,7 @@ export default function Home() {
               </div>
               <p className="text-center text-sm text-gray-500 mb-6">Sans engagement</p>
               <ul className="space-y-3 mb-8 text-sm text-gray-600">
-                <li className="flex items-center gap-2"><span className="text-green-600">✓</span> 10 crédits/mois</li>
+                <li className="flex items-center gap-2"><span className="text-green-600">✓</span> 5 crédits/mois</li>
                 <li className="flex items-center gap-2"><span className="text-green-600">✓</span> 1 avatar</li>
                 <li className="flex items-center gap-2"><span className="text-green-600">✓</span> 3€/crédit supp</li>
               </ul>
