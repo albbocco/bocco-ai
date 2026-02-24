@@ -203,7 +203,7 @@ export default function Home() {
                 {discount > 0 && <span className="text-xl text-gray-400 line-through ml-2">{starterPrice}€</span>}
                 <span className="text-gray-500">/mois</span>
               </div>
-              <p className="text-center text-sm text-gray-500 mb-6">ou {(starterPrice - discount) * 10}€/an (2 mois offerts)</p>
+              <p className="text-center text-sm text-gray-500 mb-6">Sans engagement</p>
               <ul className="space-y-3 mb-8 text-sm text-gray-600">
                 <li className="flex items-center gap-2"><span className="text-green-600">✓</span> 10 crédits/mois</li>
                 <li className="flex items-center gap-2"><span className="text-green-600">✓</span> 1 avatar</li>

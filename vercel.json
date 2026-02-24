@@ -1,6 +1,5 @@
 {
   "version": 2,
-  "name": "bocco-ai",
   "builds": [
     {
       "src": "package.json",
@@ -16,10 +15,5 @@
       "src": "/(.*)",
       "dest": "/$1"
     }
-  ],
-  "env": {
-    "JWT_SECRET": "@bocco_jwt_secret",
-    "MOLLIE_API_KEY": "@bocco_mollie_key",
-    "DATABASE_URL": "./data/bocco.db"
-  }
+  ]
 }
