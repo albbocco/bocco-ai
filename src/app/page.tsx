@@ -72,7 +72,7 @@ export default function Home() {
       <section className="relative min-h-screen flex items-center justify-center pt-20 bg-gradient-to-b from-gray-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <span className="inline-block px-4 py-2 rounded-full bg-gray-100 text-sm text-gray-600 mb-6">✨ Génère tes 1ers revenus en ligne 2026</span>
-          <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6 text-gray-900">Crée des vidéos faceless<br/>avec ton <span className="text-gray-400">avatar IA</span></h1>
+          <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6 text-gray-900">Vends tes formations<br/>déjà faites avec ton <span className="text-gray-400">avatar IA</span></h1>
           <p className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto mb-8">Sans montrer ton visage, sans équipe, sans compétences techniques. Un abonnement, un avatar, des vidéos illimitées.</p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
