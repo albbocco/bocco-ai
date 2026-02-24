@@ -1,0 +1,190 @@
+{
+  "name": "BOCCO.AI - Video Completion Handler",
+  "nodes": [
+    {
+      "parameters": {},
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "webhookId": "bocco-video-completion"
+    },
+    {
+      "parameters": {
+        "functionCode": "// Parse webhook from Hailuo/PiAPI\nconst payload = $input.first().json.body;\nreturn {\n  json: {\n    taskId: payload.task_id,\n    status: payload.status,\n    videoUrl: payload.video_url,\n    videoId: payload.custom_id // our internal video ID\n  }\n};"
+      },
+      "name": "Parse Webhook",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "conditions": [
+            {
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "completed",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ]
+        }
+      },
+      "name": "Success?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE videos SET status = 'lip_sync', video_url = ? WHERE id = ?",
+        "parameters": "={{ JSON.stringify([$json.videoUrl, $json.videoId]) }}"
+      },
+      "name": "Update to Lip Sync",
+      "type": "n8n-nodes-base.sqlite",
+      "typeVersion": 1,
+      "position": [850, 200],
+      "credentials": {
+        "sqlite": "bocco-db"
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT v.*, u.email FROM videos v JOIN users u ON v.user_id = u.id WHERE v.id = ?",
+        "parameters": "={{ JSON.stringify([$json.videoId]) }}"
+      },
+      "name": "Get Video Details",
+      "type": "n8n-nodes-base.sqlite",
+      "typeVersion": 1,
+      "position": [1050, 200],
+      "credentials": {
+        "sqlite": "bocco-db"
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.veed.io/api/v1/lip-sync",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "body": "={{ JSON.stringify({\n  video_url: $json.results[0]?.video_url,\n  audio_url: null, // Will be generated via TTS or provided by user\n  language: 'fr'\n}) }}",
+        "options": {}
+      },
+      "name": "Call VEED Lip Sync",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1250, 200],
+      "credentials": {
+        "httpHeaderAuth": {
+          "name": "VEED API Key",
+          "value": "={{ $credentials.veedKey }}"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE videos SET status = 'completed', video_url = ? WHERE id = ?",
+        "parameters": "={{ JSON.stringify([$json.output_url, $vars.videoId]) }}"
+      },
+      "name": "Mark Completed",
+      "type": "n8n-nodes-base.sqlite",
+      "typeVersion": 1,
+      "position": [1450, 200],
+      "credentials": {
+        "sqlite": "bocco-db"
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "noreply@bocco.ai",
+        "toEmail": "={{ $json.results[0]?.email }}",
+        "subject": "Votre vidéo est prête ! 🎉",
+        "text": "Votre vidéo a été générée avec succès. Téléchargez-la depuis votre dashboard.",
+        "html": "<h1>Votre vidéo est prête ! 🎉</h1><p>Votre vidéo a été générée avec succès.</p><p><a href=\"https://bocco.ai/dashboard\">Télécharger depuis votre dashboard</a></p>"
+      },
+      "name": "Send Email",
+      "type": "n8n-nodes-base.sendEmail",
+      "typeVersion": 2.1,
+      "position": [1650, 200]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ success: true }) }}"
+      },
+      "name": "Success Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1850, 200]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE videos SET status = 'failed' WHERE id = ?",
+        "parameters": "={{ JSON.stringify([$json.videoId]) }}"
+      },
+      "name": "Mark Failed",
+      "type": "n8n-nodes-base.sqlite",
+      "typeVersion": 1,
+      "position": [850, 400],
+      "credentials": {
+        "sqlite": "bocco-db"
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ success: false, error: 'Video generation failed' }) }}"
+      },
+      "name": "Error Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1050, 400]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [[{"node": "Parse Webhook", "type": "main", "index": 0}]]
+    },
+    "Parse Webhook": {
+      "main": [[{"node": "Success?", "type": "main", "index": 0}]]
+    },
+    "Success?": {
+      "main": [
+        [{"node": "Update to Lip Sync", "type": "main", "index": 0}],
+        [{"node": "Mark Failed", "type": "main", "index": 0}]
+      ]
+    },
+    "Update to Lip Sync": {
+      "main": [[{"node": "Get Video Details", "type": "main", "index": 0}]]
+    },
+    "Get Video Details": {
+      "main": [[{"node": "Call VEED Lip Sync", "type": "main", "index": 0}]]
+    },
+    "Call VEED Lip Sync": {
+      "main": [[{"node": "Mark Completed", "type": "main", "index": 0}]]
+    },
+    "Mark Completed": {
+      "main": [[{"node": "Send Email", "type": "main", "index": 0}]]
+    },
+    "Send Email": {
+      "main": [[{"node": "Success Response", "type": "main", "index": 0}]]
+    },
+    "Mark Failed": {
+      "main": [[{"node": "Error Response", "type": "main", "index": 0}]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": ["bocco", "video", "completion"],
+  "active": false
+}

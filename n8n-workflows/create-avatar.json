@@ -1,0 +1,174 @@
+{
+  "name": "BOCCO.AI - Create Avatar (FAL.ai)",
+  "nodes": [
+    {
+      "parameters": {},
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "webhookId": "bocco-create-avatar"
+    },
+    {
+      "parameters": {
+        "functionCode": "// Verify JWT and extract user info\nconst authHeader = $input.first().json.headers.authorization;\nconst token = authHeader?.replace('Bearer ', '');\nconst jwt = require('jsonwebtoken');\n\ntry {\n  const decoded = jwt.verify(token, process.env.JWT_SECRET || 'default-secret-change-in-production');\n  return {\n    json: {\n      userId: decoded.userId,\n      avatarName: $input.first().json.body.name,\n      imagePrompt: $input.first().json.body.prompt\n    }\n  };\n} catch (e) {\n  return { json: { error: 'Invalid token' } };\n}"
+      },
+      "name": "Verify JWT",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT balance FROM credits WHERE user_id = ?",
+        "parameters": "={{ JSON.stringify([$json.userId]) }}"
+      },
+      "name": "Check Credits",
+      "type": "n8n-nodes-base.sqlite",
+      "typeVersion": 1,
+      "position": [650, 200],
+      "credentials": {
+        "sqlite": "bocco-db"
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "conditions": [
+            {
+              "leftValue": "={{ $json.results[0]?.balance }}",
+              "rightValue": 1,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ]
+        }
+      },
+      "name": "Has Credits?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [850, 200]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE credits SET balance = balance - 1 WHERE user_id = ?",
+        "parameters": "={{ JSON.stringify([$json.userId]) }}"
+      },
+      "name": "Deduct Credit",
+      "type": "n8n-nodes-base.sqlite",
+      "typeVersion": 1,
+      "position": [1050, 100],
+      "credentials": {
+        "sqlite": "bocco-db"
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO avatars (user_id, name, status) VALUES (?, ?, 'pending')",
+        "parameters": "={{ JSON.stringify([$json.userId, $json.avatarName]) }}"
+      },
+      "name": "Create Avatar Record",
+      "type": "n8n-nodes-base.sqlite",
+      "typeVersion": 1,
+      "position": [1250, 100],
+      "credentials": {
+        "sqlite": "bocco-db"
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.fal.ai/v1/flux/schnell",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "body": "={{ JSON.stringify({ prompt: $json.imagePrompt || 'Professional portrait photo, high quality, detailed face', image_size: '1024x1024', num_inference_steps: 4 }) }}",
+        "options": {}
+      },
+      "name": "Call FAL.ai API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1450, 100],
+      "credentials": {
+        "httpHeaderAuth": {
+          "name": "FAL.ai API Key",
+          "value": "={{ $credentials.falAiKey }}"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE avatars SET fal_ai_prediction_id = ?, status = 'processing' WHERE id = ?",
+        "parameters": "={{ JSON.stringify([$json.request_id, $vars.avatarId]) }}"
+      },
+      "name": "Update Avatar Status",
+      "type": "n8n-nodes-base.sqlite",
+      "typeVersion": 1,
+      "position": [1650, 100],
+      "credentials": {
+        "sqlite": "bocco-db"
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ success: true, message: 'Avatar generation started', avatarId: $vars.avatarId }) }}"
+      },
+      "name": "Success Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1850, 100]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ error: 'Insufficient credits' }) }}"
+      },
+      "name": "Error Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1050, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [[{"node": "Verify JWT", "type": "main", "index": 0}]]
+    },
+    "Verify JWT": {
+      "main": [[{"node": "Check Credits", "type": "main", "index": 0}]]
+    },
+    "Check Credits": {
+      "main": [[{"node": "Has Credits?", "type": "main", "index": 0}]]
+    },
+    "Has Credits?": {
+      "main": [
+        [{"node": "Deduct Credit", "type": "main", "index": 0}],
+        [{"node": "Error Response", "type": "main", "index": 0}]
+      ]
+    },
+    "Deduct Credit": {
+      "main": [[{"node": "Create Avatar Record", "type": "main", "index": 0}]]
+    },
+    "Create Avatar Record": {
+      "main": [[{"node": "Call FAL.ai API", "type": "main", "index": 0}]]
+    },
+    "Call FAL.ai API": {
+      "main": [[{"node": "Update Avatar Status", "type": "main", "index": 0}]]
+    },
+    "Update Avatar Status": {
+      "main": [[{"node": "Success Response", "type": "main", "index": 0}]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": ["bocco", "avatar"],
+  "active": false
+}

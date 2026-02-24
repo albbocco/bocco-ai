@@ -1,0 +1,203 @@
+{
+  "name": "BOCCO.AI - Create Video (Hailuo + VEED)",
+  "nodes": [
+    {
+      "parameters": {},
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "webhookId": "bocco-create-video"
+    },
+    {
+      "parameters": {
+        "functionCode": "const authHeader = $input.first().json.headers.authorization;\nconst token = authHeader?.replace('Bearer ', '');\nconst jwt = require('jsonwebtoken');\n\ntry {\n  const decoded = jwt.verify(token, process.env.JWT_SECRET || 'default-secret-change-in-production');\n  return {\n    json: {\n      userId: decoded.userId,\n      avatarId: $input.first().json.body.avatar_id,\n      videoPrompt: $input.first().json.body.prompt,\n      duration: $input.first().json.body.duration || 'short' // short or long\n    }\n  };\n} catch (e) {\n  return { json: { error: 'Invalid token' } };\n}"
+      },
+      "name": "Verify JWT",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT balance FROM credits WHERE user_id = ?",
+        "parameters": "={{ JSON.stringify([$json.userId]) }}"
+      },
+      "name": "Check Credits",
+      "type": "n8n-nodes-base.sqlite",
+      "typeVersion": 1,
+      "position": [650, 200],
+      "credentials": {
+        "sqlite": "bocco-db"
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "// Calculate required credits\nconst duration = $input.first().json.duration;\nconst requiredCredits = duration === 'long' ? 2 : 1;\nreturn {\n  json: {\n    ...$input.first().json,\n    requiredCredits\n  }\n};"
+      },
+      "name": "Calc Required Credits",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [850, 200]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "conditions": [
+            {
+              "leftValue": "={{ $json.results[0]?.balance }}",
+              "rightValue": "={{ $json.requiredCredits }}",
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ]
+        }
+      },
+      "name": "Has Credits?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1050, 200]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE credits SET balance = balance - ? WHERE user_id = ?",
+        "parameters": "={{ JSON.stringify([$json.requiredCredits, $json.userId]) }}"
+      },
+      "name": "Deduct Credits",
+      "type": "n8n-nodes-base.sqlite",
+      "typeVersion": 1,
+      "position": [1250, 100],
+      "credentials": {
+        "sqlite": "bocco-db"
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT image_url FROM avatars WHERE id = ? AND user_id = ?",
+        "parameters": "={{ JSON.stringify([$json.avatarId, $json.userId]) }}"
+      },
+      "name": "Get Avatar Image",
+      "type": "n8n-nodes-base.sqlite",
+      "typeVersion": 1,
+      "position": [1450, 100],
+      "credentials": {
+        "sqlite": "bocco-db"
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO videos (user_id, avatar_id, prompt, status, credits_used) VALUES (?, ?, ?, 'pending', ?)",
+        "parameters": "={{ JSON.stringify([$json.userId, $json.avatarId, $json.videoPrompt, $json.requiredCredits]) }}"
+      },
+      "name": "Create Video Record",
+      "type": "n8n-nodes-base.sqlite",
+      "typeVersion": 1,
+      "position": [1650, 100],
+      "credentials": {
+        "sqlite": "bocco-db"
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.piapi.ai/v1/video/hailuo",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "body": "={{ JSON.stringify({\n  model: 'hailuo-video-2.0',\n  prompt: $json.videoPrompt,\n  image_url: $json.results[0]?.image_url,\n  duration: $json.duration === 'long' ? 10 : 6,\n  aspect_ratio: '9:16'\n}) }}",
+        "options": {}
+      },
+      "name": "Call Hailuo API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1850, 100],
+      "credentials": {
+        "httpHeaderAuth": {
+          "name": "PiAPI Key",
+          "value": "={{ $credentials.piapiKey }}"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE videos SET hailuo_prediction_id = ?, status = 'processing' WHERE id = ?",
+        "parameters": "={{ JSON.stringify([$json.task_id, $vars.videoId]) }}"
+      },
+      "name": "Update Video Status",
+      "type": "n8n-nodes-base.sqlite",
+      "typeVersion": 1,
+      "position": [2050, 100],
+      "credentials": {
+        "sqlite": "bocco-db"
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ success: true, message: 'Video generation started', videoId: $vars.videoId }) }}"
+      },
+      "name": "Success Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [2250, 100]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ error: 'Insufficient credits' }) }}"
+      },
+      "name": "Error Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1250, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [[{"node": "Verify JWT", "type": "main", "index": 0}]]
+    },
+    "Verify JWT": {
+      "main": [[{"node": "Check Credits", "type": "main", "index": 0}]]
+    },
+    "Check Credits": {
+      "main": [[{"node": "Calc Required Credits", "type": "main", "index": 0}]]
+    },
+    "Calc Required Credits": {
+      "main": [[{"node": "Has Credits?", "type": "main", "index": 0}]]
+    },
+    "Has Credits?": {
+      "main": [
+        [{"node": "Deduct Credits", "type": "main", "index": 0}],
+        [{"node": "Error Response", "type": "main", "index": 0}]
+      ]
+    },
+    "Deduct Credits": {
+      "main": [[{"node": "Get Avatar Image", "type": "main", "index": 0}]]
+    },
+    "Get Avatar Image": {
+      "main": [[{"node": "Create Video Record", "type": "main", "index": 0}]]
+    },
+    "Create Video Record": {
+      "main": [[{"node": "Call Hailuo API", "type": "main", "index": 0}]]
+    },
+    "Call Hailuo API": {
+      "main": [[{"node": "Update Video Status", "type": "main", "index": 0}]]
+    },
+    "Update Video Status": {
+      "main": [[{"node": "Success Response", "type": "main", "index": 0}]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": ["bocco", "video"],
+  "active": false
+}
