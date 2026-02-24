@@ -2,8 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { mollieClient } from '@/lib/mollie';
 import { db } from '@/lib/db';
 
-export const dynamic = 'force-dynamic';
-
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);

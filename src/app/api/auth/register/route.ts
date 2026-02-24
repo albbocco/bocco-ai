@@ -2,8 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import crypto from 'crypto';
 
-export const dynamic = 'force-dynamic';
-
 // Simple hash function (use bcrypt in production)
 function hashPassword(password: string): string {
   return crypto.createHash('sha256').update(password).digest('hex');

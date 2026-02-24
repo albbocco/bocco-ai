@@ -2,8 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import crypto from 'crypto';
 
-export const dynamic = 'force-dynamic';
-
 function verifyToken(token: string, userId: number): boolean {
   const secret = process.env.JWT_SECRET || 'default-secret-change-in-production';
   const expected = crypto.createHmac('sha256', secret).update(userId.toString()).digest('hex');

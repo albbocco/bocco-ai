@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export',
+  // Server mode for Vercel (API routes + static pages)
   distDir: 'dist',
   images: {
     unoptimized: true,
