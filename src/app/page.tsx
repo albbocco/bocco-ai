@@ -38,9 +38,9 @@ export default function Home() {
   const closeModal = () => setModalOpen(false);
 
   // Prix de base
-  const starterPrice = 24;
-  const proPrice = 69;
-  const businessPrice = 159;
+  const starterPrice = 19;
+  const proPrice = 59;
+  const businessPrice = 149;
 
   return (
     <main className="min-h-screen bg-white text-gray-900">
@@ -230,7 +230,7 @@ export default function Home() {
               <ul className="space-y-3 mb-8 text-sm text-gray-300">
                 <li className="flex items-center gap-2"><span className="text-green-400">✓</span> Coût du crédit 2,50€</li>
                 <li className="flex items-center gap-2"><span className="text-green-400">✓</span> 3 avatars maximum</li>
-                <li className="flex items-center gap-2"><span className="text-green-400">✓</span> 30 crédits/mois offerts</li>
+                <li className="flex items-center gap-2"><span className="text-green-400">✓</span> 35 crédits/mois offerts</li>
               </ul>
               <button onClick={openModal} className="w-full bg-white text-gray-900 py-3 rounded-xl font-medium hover:bg-gray-100 transition">Choisir Pro</button>
             </div>
@@ -250,7 +250,7 @@ export default function Home() {
               <ul className="space-y-3 mb-8 text-sm text-gray-600">
                 <li className="flex items-center gap-2"><span className="text-green-600">✓</span> Coût du crédit 2€</li>
                 <li className="flex items-center gap-2"><span className="text-green-600">✓</span> 10 avatars maximum</li>
-                <li className="flex items-center gap-2"><span className="text-green-600">✓</span> 100 crédits/mois offerts</li>
+                <li className="flex items-center gap-2"><span className="text-green-600">✓</span> 120 crédits/mois offerts</li>
               </ul>
               <button onClick={openModal} className="w-full py-3 rounded-xl font-medium border-2 border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white transition">Choisir Business</button>
             </div>
