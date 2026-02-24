@@ -29,7 +29,7 @@ export const PLANS = {
   business: {
     id: 'business',
     name: 'Business',
-    price: 119,
+    price: 109,
     credits: 100,
     extraCreditPrice: 1.5,
   },

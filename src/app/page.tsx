@@ -40,7 +40,7 @@ export default function Home() {
   // Prix de base
   const starterPrice = 19;
   const proPrice = 49;
-  const businessPrice = 119;
+  const businessPrice = 109;
 
   return (
     <main className="min-h-screen bg-white text-gray-900">
