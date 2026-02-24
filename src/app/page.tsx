@@ -206,8 +206,8 @@ export default function Home() {
               <p className="text-center text-sm text-gray-500 mb-6">Sans engagement</p>
               <ul className="space-y-3 mb-8 text-sm text-gray-600">
                 <li className="flex items-center gap-2"><span className="text-green-600">✓</span> Coût du crédit 3€</li>
-                <li className="flex items-center gap-2"><span className="text-green-600">✓</span> 1 avatar maximum</li>
                 <li className="flex items-center gap-2"><span className="text-green-600">✓</span> 5 crédits/mois offerts</li>
+                <li className="flex items-center gap-2"><span className="text-green-600">✓</span> 1 avatar maximum</li>
               </ul>
               <button onClick={openModal} className="w-full py-3 rounded-xl font-medium border-2 border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white transition">Choisir Starter</button>
             </div>
@@ -229,8 +229,8 @@ export default function Home() {
               <p className="text-center text-sm text-gray-400 mb-6">ou {(proPrice - discount) * 10}€/an (2 mois offerts)</p>
               <ul className="space-y-3 mb-8 text-sm text-gray-300">
                 <li className="flex items-center gap-2"><span className="text-green-400">✓</span> Coût du crédit 2,50€</li>
-                <li className="flex items-center gap-2"><span className="text-green-400">✓</span> 3 avatars maximum</li>
                 <li className="flex items-center gap-2"><span className="text-green-400">✓</span> 30 crédits/mois offerts</li>
+                <li className="flex items-center gap-2"><span className="text-green-400">✓</span> 3 avatars maximum</li>
               </ul>
               <button onClick={openModal} className="w-full bg-white text-gray-900 py-3 rounded-xl font-medium hover:bg-gray-100 transition">Choisir Pro</button>
             </div>
@@ -249,8 +249,8 @@ export default function Home() {
               <p className="text-center text-sm text-gray-500 mb-6">ou {(businessPrice - discount) * 10}€/an (2 mois offerts)</p>
               <ul className="space-y-3 mb-8 text-sm text-gray-600">
                 <li className="flex items-center gap-2"><span className="text-green-600">✓</span> Coût du crédit 1,50€</li>
-                <li className="flex items-center gap-2"><span className="text-green-600">✓</span> 10 avatars maximum</li>
                 <li className="flex items-center gap-2"><span className="text-green-600">✓</span> 100 crédits/mois offerts</li>
+                <li className="flex items-center gap-2"><span className="text-green-600">✓</span> 10 avatars maximum</li>
               </ul>
               <button onClick={openModal} className="w-full py-3 rounded-xl font-medium border-2 border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white transition">Choisir Business</button>
             </div>
