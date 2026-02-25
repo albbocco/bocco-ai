@@ -228,7 +228,7 @@ export default function Home() {
               </div>
               <p className="text-center text-sm text-gray-400 mb-6">ou {(proPrice - discount) * 10}€/an (2 mois offerts)</p>
               <ul className="space-y-3 mb-8 text-sm text-gray-300">
-                <li className="flex items-center gap-2"><span className="text-green-400">✓</span> Coût du crédit 2,50€</li>
+                <li className="flex items-center gap-2"><span className="text-green-400">✓</span> Coût du crédit 2€</li>
                 <li className="flex items-center gap-2"><span className="text-green-400">✓</span> 30 crédits/mois offerts</li>
                 <li className="flex items-center gap-2"><span className="text-green-400">✓</span> 3 avatars maximum</li>
               </ul>
