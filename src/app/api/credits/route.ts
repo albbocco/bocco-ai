@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db';
+import { supabase } from '@/lib/supabase';
 import crypto from 'crypto';
 
-function verifyToken(token: string, userId: number): boolean {
+function verifyToken(token: string, userId: string): boolean {
   const secret = process.env.JWT_SECRET || 'default-secret-change-in-production';
-  const expected = crypto.createHmac('sha256', secret).update(userId.toString()).digest('hex');
+  const expected = crypto.createHmac('sha256', secret).update(userId).digest('hex');
   return token === expected;
 }
 
@@ -18,16 +18,17 @@ export async function GET(req: NextRequest) {
     const token = authHeader.slice(7);
     const userId = req.headers.get('x-user-id');
 
-    if (!userId || !verifyToken(token, parseInt(userId))) {
+    if (!userId || !verifyToken(token, userId)) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
     }
 
-    const credits = db.prepare('SELECT * FROM credits WHERE user_id = ?').get(userId) as {
-      balance: number;
-      monthly_allowance: number;
-    } | undefined;
+    const { data: credits, error } = await supabase
+      .from('credits')
+      .select('*')
+      .eq('user_id', userId)
+      .single();
 
-    if (!credits) {
+    if (error || !credits) {
       return NextResponse.json({ error: 'Credits not found' }, { status: 404 });
     }
 

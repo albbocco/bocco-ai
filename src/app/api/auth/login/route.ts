@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db';
+import { supabase } from '@/lib/supabase';
 import crypto from 'crypto';
 
 function hashPassword(password: string): string {
   return crypto.createHash('sha256').update(password).digest('hex');
 }
 
-function generateToken(userId: number): string {
+function generateToken(userId: string): string {
   const secret = process.env.JWT_SECRET || 'default-secret-change-in-production';
-  return crypto.createHmac('sha256', secret).update(userId.toString()).digest('hex');
+  return crypto.createHmac('sha256', secret).update(userId).digest('hex');
 }
 
 export async function POST(req: NextRequest) {
@@ -23,15 +23,14 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Get user
-    const user = db.prepare('SELECT * FROM users WHERE email = ?').get(email) as {
-      id: number;
-      email: string;
-      name: string;
-      password_hash: string;
-    } | undefined;
+    // Get user from Supabase
+    const { data: user, error } = await supabase
+      .from('users')
+      .select('*')
+      .eq('email', email)
+      .single();
 
-    if (!user) {
+    if (error || !user) {
       return NextResponse.json(
         { error: 'Invalid credentials' },
         { status: 401 }
@@ -51,15 +50,25 @@ export async function POST(req: NextRequest) {
     const token = generateToken(user.id);
 
     // Get credits
-    const credits = db.prepare('SELECT * FROM credits WHERE user_id = ?').get(user.id);
+    const { data: credits } = await supabase
+      .from('credits')
+      .select('*')
+      .eq('user_id', user.id)
+      .single();
 
     // Get subscription
-    const subscription = db.prepare('SELECT * FROM subscriptions WHERE user_id = ?').get(user.id);
+    const { data: subscription } = await supabase
+      .from('subscriptions')
+      .select('*')
+      .eq('user_id', user.id)
+      .single();
 
     // Get formations
-    const formations = db
-      .prepare('SELECT formation_type FROM formation_purchases WHERE user_id = ? AND status = ?')
-      .all(user.id, 'completed') as { formation_type: string }[];
+    const { data: formations } = await supabase
+      .from('formations_purchases')
+      .select('formation_type')
+      .eq('user_id', user.id)
+      .eq('status', 'completed');
 
     return NextResponse.json({
       success: true,
@@ -71,7 +80,7 @@ export async function POST(req: NextRequest) {
       },
       credits: credits || { balance: 0, monthly_allowance: 0 },
       subscription: subscription || null,
-      formations: formations.map((f) => f.formation_type),
+      formations: formations?.map((f: any) => f.formation_type) || [],
     });
   } catch (error) {
     console.error('Login error:', error);

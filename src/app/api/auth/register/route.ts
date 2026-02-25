@@ -1,15 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db';
+import { supabase } from '@/lib/supabase';
 import crypto from 'crypto';
 
-// Simple hash function (use bcrypt in production)
 function hashPassword(password: string): string {
   return crypto.createHash('sha256').update(password).digest('hex');
 }
 
-function generateToken(userId: number): string {
+function generateToken(userId: string): string {
   const secret = process.env.JWT_SECRET || 'default-secret-change-in-production';
-  return crypto.createHmac('sha256', secret).update(userId.toString()).digest('hex');
+  return crypto.createHmac('sha256', secret).update(userId).digest('hex');
 }
 
 export async function POST(req: NextRequest) {
@@ -25,7 +24,12 @@ export async function POST(req: NextRequest) {
     }
 
     // Check if user exists
-    const existing = db.prepare('SELECT id FROM users WHERE email = ?').get(email);
+    const { data: existing } = await supabase
+      .from('users')
+      .select('id')
+      .eq('email', email)
+      .single();
+
     if (existing) {
       return NextResponse.json(
         { error: 'User already exists' },
@@ -35,26 +39,41 @@ export async function POST(req: NextRequest) {
 
     // Create user
     const passwordHash = hashPassword(password);
-    const result = db.prepare(
-      'INSERT INTO users (email, name, password_hash) VALUES (?, ?, ?)'
-    ).run(email, name || null, passwordHash);
+    const { data: user, error } = await supabase
+      .from('users')
+      .insert({
+        email,
+        name: name || null,
+        password_hash: passwordHash,
+      })
+      .select()
+      .single();
 
-    const userId = result.lastInsertRowid;
+    if (error || !user) {
+      return NextResponse.json(
+        { error: 'Failed to create user' },
+        { status: 500 }
+      );
+    }
 
-    // Create initial credits (0 for new users, they need to subscribe)
-    db.prepare(
-      'INSERT INTO credits (user_id, balance, monthly_allowance) VALUES (?, 0, 0)'
-    ).run(userId);
+    // Create initial credits
+    await supabase
+      .from('credits')
+      .insert({
+        user_id: user.id,
+        balance: 0,
+        monthly_allowance: 0,
+      });
 
     // Generate token
-    const token = generateToken(userId as number);
+    const token = generateToken(user.id);
 
     return NextResponse.json({
       success: true,
       message: 'User created successfully',
       token,
       user: {
-        id: userId,
+        id: user.id,
         email,
         name: name || null,
       },
