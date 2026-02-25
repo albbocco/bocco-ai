@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 
 export default function Home() {
-  const [modalOpen, setModalOpen] = useState(false);
   const [formations, setFormations] = useState({
     code: false
   });
@@ -34,9 +33,6 @@ export default function Home() {
     return () => observer.disconnect();
   }, []);
 
-  const openModal = () => setModalOpen(true);
-  const closeModal = () => setModalOpen(false);
-
   // Prix de base
   const starterPrice = 19;
   const proPrice = 49;
@@ -61,8 +57,8 @@ export default function Home() {
               <a href="#faq" className="text-sm text-gray-600 hover:text-gray-900 transition">FAQ</a>
             </div>
             <div className="flex items-center space-x-4">
-              <button onClick={openModal} className="text-sm text-gray-600 hover:text-gray-900 transition">Connexion</button>
-              <button onClick={openModal} className="btn-primary px-4 py-2 rounded-full text-sm font-medium">Essai gratuit</button>
+              <a href="/login" className="text-sm text-gray-600 hover:text-gray-900 transition">Connexion</a>
+              <a href="/register" className="btn-primary px-4 py-2 rounded-full text-sm font-medium">Essai gratuit</a>
             </div>
           </div>
         </div>
@@ -76,8 +72,8 @@ export default function Home() {
           <p className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto mb-8">Sans montrer ton visage, sans équipe, sans compétences techniques. Un abonnement, un avatar, des vidéos illimitées.</p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-            <button onClick={openModal} className="btn-primary px-8 py-4 rounded-full text-lg font-medium">Créer mon avatar gratuit →</button>
-            <a href="#comment" className="px-8 py-4 rounded-full text-lg font-medium border-2 border-gray-300 text-gray-700 hover:border-gray-900 hover:text-gray-900 transition">Voir comment ça marche</a>
+            <a href="/register" className="btn-primary px-8 py-4 rounded-full text-lg font-medium text-center">Créer mon avatar gratuit →</a>
+            <a href="#comment" className="px-8 py-4 rounded-full text-lg font-medium border-2 border-gray-300 text-gray-700 hover:border-gray-900 hover:text-gray-900 transition text-center">Voir comment ça marche</a>
           </div>
 
           <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
@@ -209,7 +205,7 @@ export default function Home() {
                 <li className="flex items-center gap-2"><span className="text-green-600">✓</span> 5 crédits/mois offerts</li>
                 <li className="flex items-center gap-2"><span className="text-green-600">✓</span> 1 avatar maximum</li>
               </ul>
-              <button onClick={openModal} className="w-full py-3 rounded-xl font-medium border-2 border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white transition">Choisir Starter</button>
+              <a href="/register" className="block w-full py-3 rounded-xl font-medium border-2 border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white transition text-center">Choisir Starter</a>
             </div>
             
             {/* Pro */}
@@ -232,7 +228,7 @@ export default function Home() {
                 <li className="flex items-center gap-2"><span className="text-green-400">✓</span> 30 crédits/mois offerts</li>
                 <li className="flex items-center gap-2"><span className="text-green-400">✓</span> 3 avatars maximum</li>
               </ul>
-              <button onClick={openModal} className="w-full bg-white text-gray-900 py-3 rounded-xl font-medium hover:bg-gray-100 transition">Choisir Pro</button>
+              <a href="/register" className="block w-full bg-white text-gray-900 py-3 rounded-xl font-medium hover:bg-gray-100 transition text-center">Choisir Pro</a>
             </div>
             
             {/* Business */}
@@ -252,7 +248,7 @@ export default function Home() {
                 <li className="flex items-center gap-2"><span className="text-green-600">✓</span> 100 crédits/mois offerts</li>
                 <li className="flex items-center gap-2"><span className="text-green-600">✓</span> 10 avatars maximum</li>
               </ul>
-              <button onClick={openModal} className="w-full py-3 rounded-xl font-medium border-2 border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white transition">Choisir Business</button>
+              <a href="/register" className="block w-full py-3 rounded-xl font-medium border-2 border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white transition text-center">Choisir Business</a>
             </div>
           </div>
 
@@ -290,7 +286,7 @@ export default function Home() {
                 <span className="text-3xl font-bold text-gray-900">350€</span>
                 <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-bold">-10€/mois à vie</span>
               </div>
-              <button onClick={openModal} className="w-full btn-primary py-3 rounded-xl font-medium">Acheter Code Liberté</button>
+              <a href="/register" className="block w-full btn-primary py-3 rounded-xl font-medium text-center">Acheter Code Liberté</a>
             </div>
           </div>
         </div>
@@ -353,19 +349,6 @@ export default function Home() {
         </div>
       </footer>
 
-      {/* Modal */}
-      {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={closeModal}>
-          <div className="bg-white rounded-3xl p-8 max-w-md w-full mx-4 shadow-2xl" onClick={(e) => e.stopPropagation()}>
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-2xl font-bold text-gray-900">Bientôt disponible</h3>
-              <button onClick={closeModal} className="text-gray-400 hover:text-gray-900 text-2xl">×</button>
-            </div>
-            <p className="text-gray-600 mb-6">Cette fonctionnalité est en cours de développement.</p>
-            <button onClick={closeModal} className="w-full btn-primary py-3 rounded-xl font-medium">Compris</button>
-          </div>
-        </div>
-      )}
     </main>
   );
 }
