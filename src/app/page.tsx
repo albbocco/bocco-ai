@@ -329,7 +329,7 @@ export default function Home() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">Prêt à créer ton avatar ?</h2>
           <p className="text-xl text-gray-300 mb-8">Commence gratuitement, pas de carte bancaire requise.</p>
-          <button onClick={openModal} className="bg-white text-gray-900 px-8 py-4 rounded-full text-lg font-medium hover:bg-gray-100 transition">Créer mon avatar gratuit →</button>
+          <a href="/register" className="inline-block bg-white text-gray-900 px-8 py-4 rounded-full text-lg font-medium hover:bg-gray-100 transition">Créer mon avatar gratuit →</a>
           <p className="text-sm text-gray-400 mt-4">30 secondes · Gratuit · Sans engagement</p>
         </div>
       </section>
