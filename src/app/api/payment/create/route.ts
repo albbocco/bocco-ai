@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { mollieClient, PLANS, calculateSubscriptionPrice } from '@/lib/mollie';
 import { supabase } from '@/lib/supabase';
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();

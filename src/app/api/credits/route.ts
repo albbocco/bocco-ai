@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import crypto from 'crypto';
 
+export const dynamic = 'force-dynamic';
+
 function verifyToken(token: string, userId: string): boolean {
   const secret = process.env.JWT_SECRET || 'default-secret-change-in-production';
   const expected = crypto.createHmac('sha256', secret).update(userId).digest('hex');
