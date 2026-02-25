@@ -6,7 +6,10 @@ import { useRouter } from 'next/navigation';
 export default function Dashboard() {
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
+  const [credits, setCredits] = useState({ balance: 0, monthly_allowance: 0 });
+  const [avatars, setAvatars] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [creatingAvatar, setCreatingAvatar] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -17,9 +20,61 @@ export default function Dashboard() {
       return;
     }
 
-    setUser(JSON.parse(userData));
+    const parsedUser = JSON.parse(userData);
+    setUser(parsedUser);
+    
+    // Fetch credits
+    fetchCredits(parsedUser.id);
+    fetchAvatars(parsedUser.id);
+    
     setLoading(false);
   }, [router]);
+
+  const fetchCredits = async (userId: string) => {
+    const res = await fetch(`/api/credits`, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        'X-User-Id': userId,
+      },
+    });
+    const data = await res.json();
+    if (data.success) {
+      setCredits(data.credits);
+    }
+  };
+
+  const fetchAvatars = async (userId: string) => {
+    const res = await fetch(`/api/avatars?userId=${userId}`);
+    const data = await res.json();
+    if (data.success) {
+      setAvatars(data.avatars);
+    }
+  };
+
+  const createAvatar = async () => {
+    if (!user) return;
+    
+    setCreatingAvatar(true);
+    const res = await fetch('/api/avatar/create', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        userId: user.id,
+        name: 'Mon Avatar',
+        prompt: 'Professional portrait photo, high quality, detailed face',
+      }),
+    });
+
+    const data = await res.json();
+    if (data.success) {
+      fetchCredits(user.id);
+      fetchAvatars(user.id);
+      alert('Avatar créé avec succès !');
+    } else {
+      alert(data.error || 'Erreur lors de la création');
+    }
+    setCreatingAvatar(false);
+  };
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -68,17 +123,21 @@ export default function Dashboard() {
           {/* Credits Card */}
           <div className="bg-white rounded-xl shadow-sm p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-2">Mes crédits</h2>
-            <p className="text-3xl font-bold text-gray-900">0</p>
+            <p className="text-3xl font-bold text-gray-900">{credits.balance}</p>
             <p className="text-gray-500 text-sm">crédits disponibles</p>
           </div>
 
           {/* Avatars Card */}
           <div className="bg-white rounded-xl shadow-sm p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-2">Mes avatars</h2>
-            <p className="text-3xl font-bold text-gray-900">0</p>
+            <p className="text-3xl font-bold text-gray-900">{avatars.length}</p>
             <p className="text-gray-500 text-sm">avatars créés</p>
-            <button className="mt-4 w-full bg-gray-900 text-white py-2 rounded-lg text-sm hover:bg-gray-800">
-              Créer un avatar
+            <button
+              onClick={createAvatar}
+              disabled={creatingAvatar || credits.balance < 1}
+              className="mt-4 w-full bg-gray-900 text-white py-2 rounded-lg text-sm hover:bg-gray-800 disabled:opacity-50"
+            >
+              {creatingAvatar ? 'Création...' : 'Créer un avatar (1 crédit)'}
             </button>
           </div>
 
@@ -87,11 +146,38 @@ export default function Dashboard() {
             <h2 className="text-lg font-semibold text-gray-900 mb-2">Mes vidéos</h2>
             <p className="text-3xl font-bold text-gray-900">0</p>
             <p className="text-gray-500 text-sm">vidéos générées</p>
-            <button className="mt-4 w-full bg-gray-900 text-white py-2 rounded-lg text-sm hover:bg-gray-800">
-              Créer une vidéo
+            <button
+              disabled={avatars.length === 0 || credits.balance < 1}
+              className="mt-4 w-full bg-gray-900 text-white py-2 rounded-lg text-sm hover:bg-gray-800 disabled:opacity-50"
+            >
+              Créer une vidéo (1-2 crédits)
             </button>
           </div>
         </div>
+
+        {/* Avatars List */}
+        {avatars.length > 0 && (
+          <div className="mt-12">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">Mes avatars</h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {avatars.map((avatar: any) => (
+                <div key={avatar.id} className="bg-white rounded-xl shadow-sm overflow-hidden">
+                  {avatar.image_url ? (
+                    <img src={avatar.image_url} alt={avatar.name} className="w-full h-48 object-cover" />
+                  ) : (
+                    <div className="w-full h-48 bg-gray-200 flex items-center justify-center">
+                      <span className="text-gray-500">En cours...</span>
+                    </div>
+                  )}
+                  <div className="p-4">
+                    <p className="font-medium text-gray-900">{avatar.name}</p>
+                    <p className="text-sm text-gray-500">{avatar.status}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </main>
   );
