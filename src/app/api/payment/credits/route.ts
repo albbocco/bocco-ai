@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { mollieClient, PLANS } from '@/lib/mollie';
-import { db } from '@/lib/db';
+import { supabase } from '@/lib/supabase';
 
 export async function POST(req: NextRequest) {
   try {
@@ -12,20 +12,25 @@ export async function POST(req: NextRequest) {
     }
 
     // Get user's plan for credit pricing
-    const sub = db
-      .prepare('SELECT plan FROM subscriptions WHERE user_id = ? AND status = ?')
-      .get(userId, 'active') as { plan: keyof typeof PLANS } | undefined;
+    const { data: sub } = await supabase
+      .from('subscriptions')
+      .select('plan')
+      .eq('user_id', userId)
+      .eq('status', 'active')
+      .single();
 
     const planId = sub?.plan || 'starter';
-    const creditPrice = PLANS[planId].extraCreditPrice;
+    const creditPrice = PLANS[planId as keyof typeof PLANS].extraCreditPrice;
     const totalPrice = amount * creditPrice;
 
     const description = `${amount} crédits supplémentaires - bocco.ai`;
 
     // Get or create Mollie customer
-    const existingSub = db
-      .prepare('SELECT mollie_customer_id FROM subscriptions WHERE user_id = ?')
-      .get(userId) as { mollie_customer_id: string } | undefined;
+    const { data: existingSub } = await supabase
+      .from('subscriptions')
+      .select('mollie_customer_id')
+      .eq('user_id', userId)
+      .single();
 
     let customerId = existingSub?.mollie_customer_id;
 
@@ -56,10 +61,17 @@ export async function POST(req: NextRequest) {
     });
 
     // Create payment record
-    db.prepare(`
-      INSERT INTO payments (user_id, mollie_payment_id, amount, currency, status, description, metadata)
-      VALUES (?, ?, ?, 'EUR', 'pending', ?, ?)
-    `).run(userId, payment.id, totalPrice, description, JSON.stringify({ type: 'credits', credits: amount }));
+    await supabase
+      .from('payments')
+      .insert({
+        user_id: userId,
+        mollie_payment_id: payment.id,
+        amount: totalPrice,
+        currency: 'EUR',
+        status: 'pending',
+        description,
+        metadata: { type: 'credits', credits: amount },
+      });
 
     return NextResponse.json({
       success: true,

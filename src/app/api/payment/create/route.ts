@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { mollieClient, PLANS, calculateSubscriptionPrice } from '@/lib/mollie';
-import { db } from '@/lib/db';
+import { supabase } from '@/lib/supabase';
 
 export async function POST(req: NextRequest) {
   try {
@@ -13,11 +13,13 @@ export async function POST(req: NextRequest) {
     }
 
     // Get user's formations for discount calculation
-    const formations = db
-      .prepare('SELECT formation_type FROM formation_purchases WHERE user_id = ? AND status = ?')
-      .all(userId, 'completed') as { formation_type: string }[];
+    const { data: formations } = await supabase
+      .from('formation_purchases')
+      .select('formation_type')
+      .eq('user_id', userId)
+      .eq('status', 'completed');
 
-    const formationIds = formations.map((f) => f.formation_type);
+    const formationIds = formations?.map((f) => f.formation_type) || [];
     const { finalPrice, discount } = calculateSubscriptionPrice(planId, formationIds);
 
     // Calculate annual price if needed (10 months = 2 months free)
@@ -25,9 +27,11 @@ export async function POST(req: NextRequest) {
     const description = `${PLANS[planId as keyof typeof PLANS].name} ${isAnnual ? 'Annuel' : 'Mensuel'} - bocco.ai`;
 
     // Check if user already has a Mollie customer ID
-    const existingSub = db
-      .prepare('SELECT mollie_customer_id FROM subscriptions WHERE user_id = ?')
-      .get(userId) as { mollie_customer_id: string } | undefined;
+    const { data: existingSub } = await supabase
+      .from('subscriptions')
+      .select('mollie_customer_id')
+      .eq('user_id', userId)
+      .single();
 
     let customerId = existingSub?.mollie_customer_id;
 
@@ -60,28 +64,35 @@ export async function POST(req: NextRequest) {
     } as any);
 
     // Create or update subscription record
-    const existing = db
-      .prepare('SELECT id FROM subscriptions WHERE user_id = ?')
-      .get(userId);
+    const { data: existing } = await supabase
+      .from('subscriptions')
+      .select('id')
+      .eq('user_id', userId)
+      .single();
 
     if (existing) {
-      db.prepare(`
-        UPDATE subscriptions 
-        SET plan = ?, status = 'pending', mollie_customer_id = ?, updated_at = CURRENT_TIMESTAMP
-        WHERE user_id = ?
-      `).run(planId, customerId, userId);
+      await supabase
+        .from('subscriptions')
+        .update({ plan: planId, status: 'pending', mollie_customer_id: customerId })
+        .eq('user_id', userId);
     } else {
-      db.prepare(`
-        INSERT INTO subscriptions (user_id, plan, status, mollie_customer_id)
-        VALUES (?, ?, 'pending', ?)
-      `).run(userId, planId, customerId);
+      await supabase
+        .from('subscriptions')
+        .insert({ user_id: userId, plan: planId, status: 'pending', mollie_customer_id: customerId });
     }
 
     // Create payment record
-    db.prepare(`
-      INSERT INTO payments (user_id, mollie_payment_id, amount, currency, status, description, metadata)
-      VALUES (?, ?, ?, 'EUR', 'pending', ?, ?)
-    `).run(userId, payment.id, intervalAmount, description, JSON.stringify({ planId, isAnnual, discount }));
+    await supabase
+      .from('payments')
+      .insert({
+        user_id: userId,
+        mollie_payment_id: payment.id,
+        amount: intervalAmount,
+        currency: 'EUR',
+        status: 'pending',
+        description,
+        metadata: { planId, isAnnual, discount },
+      });
 
     return NextResponse.json({
       success: true,

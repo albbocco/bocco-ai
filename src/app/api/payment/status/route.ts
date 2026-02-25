@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { mollieClient } from '@/lib/mollie';
-import { db } from '@/lib/db';
+import { supabase } from '@/lib/supabase';
 
 export async function GET(req: NextRequest) {
   try {
@@ -11,12 +11,14 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'No payment ID' }, { status: 400 });
     }
 
-    // Get from database first
-    const payment = db
-      .prepare('SELECT * FROM payments WHERE mollie_payment_id = ?')
-      .get(paymentId) as { status: string } | undefined;
+    // Get from database
+    const { data: payment, error } = await supabase
+      .from('payments')
+      .select('*')
+      .eq('mollie_payment_id', paymentId)
+      .single();
 
-    if (!payment) {
+    if (error || !payment) {
       return NextResponse.json({ error: 'Payment not found' }, { status: 404 });
     }
 

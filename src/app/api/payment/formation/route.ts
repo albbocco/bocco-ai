@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { mollieClient, FORMATIONS } from '@/lib/mollie';
-import { db } from '@/lib/db';
+import { supabase } from '@/lib/supabase';
 
 export async function POST(req: NextRequest) {
   try {
@@ -16,9 +16,11 @@ export async function POST(req: NextRequest) {
     const description = `Formation ${formation.name} - bocco.ai`;
 
     // Get or create Mollie customer
-    const existingSub = db
-      .prepare('SELECT mollie_customer_id FROM subscriptions WHERE user_id = ?')
-      .get(userId) as { mollie_customer_id: string } | undefined;
+    const { data: existingSub } = await supabase
+      .from('subscriptions')
+      .select('mollie_customer_id')
+      .eq('user_id', userId)
+      .single();
 
     let customerId = existingSub?.mollie_customer_id;
 
@@ -49,10 +51,15 @@ export async function POST(req: NextRequest) {
     });
 
     // Create formation purchase record
-    db.prepare(`
-      INSERT INTO formation_purchases (user_id, formation_type, amount_paid, mollie_payment_id, status)
-      VALUES (?, ?, ?, ?, 'pending')
-    `).run(userId, formationId, formation.price, payment.id);
+    await supabase
+      .from('formation_purchases')
+      .insert({
+        user_id: userId,
+        formation_type: formationId,
+        amount_paid: formation.price,
+        mollie_payment_id: payment.id,
+        status: 'pending',
+      });
 
     return NextResponse.json({
       success: true,

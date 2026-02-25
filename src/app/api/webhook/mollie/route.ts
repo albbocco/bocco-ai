@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { mollieClient, PLANS } from '@/lib/mollie';
-import { db } from '@/lib/db';
+import { supabase } from '@/lib/supabase';
 
 export async function POST(req: NextRequest) {
   try {
@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
     // Get payment details from Mollie
     const payment = await mollieClient.payments.get(id);
     const metadata = payment.metadata as Record<string, string>;
-    const userId = parseInt(metadata?.userId || '0');
+    const userId = metadata?.userId;
 
     if (!userId) {
       console.error('No userId in payment metadata');
@@ -22,11 +22,13 @@ export async function POST(req: NextRequest) {
     }
 
     // Update payment status
-    db.prepare(`
-      UPDATE payments 
-      SET status = ?, paid_at = ?, updated_at = CURRENT_TIMESTAMP
-      WHERE mollie_payment_id = ?
-    `).run(payment.status, payment.paidAt || null, id);
+    await supabase
+      .from('payments')
+      .update({
+        status: payment.status,
+        paid_at: payment.paidAt || null,
+      })
+      .eq('mollie_payment_id', id);
 
     // Handle successful payment
     if (payment.status === 'paid') {
@@ -37,40 +39,30 @@ export async function POST(req: NextRequest) {
         const credits = parseInt(metadata?.credits || '0');
         
         // Update credit balance
-        db.prepare(`
-          UPDATE credits 
-          SET balance = balance + ?, updated_at = CURRENT_TIMESTAMP
-          WHERE user_id = ?
-        `).run(credits, userId);
+        await supabase.rpc('increment_credits', {
+          user_id: userId,
+          amount: credits,
+        });
 
         // Add transaction record
-        db.prepare(`
-          INSERT INTO credit_transactions (user_id, amount, type, description, metadata)
-          VALUES (?, ?, 'purchase', ?, ?)
-        `).run(userId, credits, `Achat de ${credits} crédits`, JSON.stringify({ paymentId: id }));
+        await supabase
+          .from('credit_transactions')
+          .insert({
+            user_id: userId,
+            amount: credits,
+            type: 'purchase',
+            description: `Achat de ${credits} crédits`,
+            metadata: { paymentId: id },
+          });
 
       } else if (paymentType === 'formation') {
         // Handle formation purchase
         const formationId = metadata?.formationId;
         
-        db.prepare(`
-          UPDATE formation_purchases 
-          SET status = 'completed', updated_at = CURRENT_TIMESTAMP
-          WHERE mollie_payment_id = ?
-        `).run(id);
-
-        // Get formation discount
-        const { FORMATIONS } = await import('@/lib/mollie');
-        const formation = FORMATIONS[formationId as keyof typeof FORMATIONS];
-        
-        if (formation) {
-          // Apply discount to subscription
-          db.prepare(`
-            UPDATE subscriptions 
-            SET updated_at = CURRENT_TIMESTAMP
-            WHERE user_id = ?
-          `).run(userId);
-        }
+        await supabase
+          .from('formation_purchases')
+          .update({ status: 'completed' })
+          .eq('mollie_payment_id', id);
 
       } else {
         // Handle subscription payment
@@ -89,45 +81,55 @@ export async function POST(req: NextRequest) {
             periodEnd.setMonth(periodEnd.getMonth() + 1);
           }
 
-          db.prepare(`
-            UPDATE subscriptions 
-            SET status = 'active', 
-                plan = ?,
-                current_period_start = CURRENT_TIMESTAMP,
-                current_period_end = ?,
-                updated_at = CURRENT_TIMESTAMP
-            WHERE user_id = ?
-          `).run(planId, periodEnd.toISOString(), userId);
+          await supabase
+            .from('subscriptions')
+            .upsert({
+              user_id: userId,
+              status: 'active',
+              plan: planId,
+              current_period_start: new Date().toISOString(),
+              current_period_end: periodEnd.toISOString(),
+            });
 
           // Add or update credits
-          const existingCredits = db
-            .prepare('SELECT id FROM credits WHERE user_id = ?')
-            .get(userId);
+          const { data: existingCredits } = await supabase
+            .from('credits')
+            .select('id')
+            .eq('user_id', userId)
+            .single();
 
           if (existingCredits) {
-            db.prepare(`
-              UPDATE credits 
-              SET balance = balance + ?, 
-                  monthly_allowance = ?,
-                  updated_at = CURRENT_TIMESTAMP
-              WHERE user_id = ?
-            `).run(creditsToAdd, plan.credits, userId);
+            await supabase
+              .from('credits')
+              .update({
+                balance: supabase.rpc('increment', { amount: creditsToAdd }),
+                monthly_allowance: plan.credits,
+              })
+              .eq('user_id', userId);
           } else {
-            db.prepare(`
-              INSERT INTO credits (user_id, balance, monthly_allowance)
-              VALUES (?, ?, ?)
-            `).run(userId, creditsToAdd, plan.credits);
+            await supabase
+              .from('credits')
+              .insert({
+                user_id: userId,
+                balance: creditsToAdd,
+                monthly_allowance: plan.credits,
+              });
           }
 
           // Add transaction record
-          db.prepare(`
-            INSERT INTO credit_transactions (user_id, amount, type, description, metadata)
-            VALUES (?, ?, 'subscription_renewal', ?, ?)
-          `).run(userId, creditsToAdd, `Abonnement ${plan.name} ${isAnnual ? 'annuel' : 'mensuel'}`, JSON.stringify({ planId, isAnnual, paymentId: id }));
+          await supabase
+            .from('credit_transactions')
+            .insert({
+              user_id: userId,
+              amount: creditsToAdd,
+              type: 'subscription_renewal',
+              description: `Abonnement ${plan.name} ${isAnnual ? 'annuel' : 'mensuel'}`,
+              metadata: { planId, isAnnual, paymentId: id },
+            });
         }
       }
 
-      // Trigger n8n webhook for post-payment actions (emails, etc.)
+      // Trigger n8n webhook for post-payment actions
       const n8nWebhookUrl = process.env.N8N_WEBHOOK_URL;
       if (n8nWebhookUrl) {
         try {
